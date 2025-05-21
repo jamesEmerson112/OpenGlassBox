@@ -110,3 +110,11 @@ int main(int argc, char **argv)
 #if !defined(_WIN32)
 #  pragma GCC diagnostic pop
 #endif
+
+#ifdef _WIN32
+#include <windows.h>
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
+    return main(__argc, __argv);
+}
+#endif

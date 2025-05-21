@@ -17,7 +17,8 @@ include $(M)/project/Makefile
 #
 SRC_FILES := $(call rwildcard,src,*.cpp)
 INCLUDES := $(P)/include $(P)/demo/src $(P)
-INCLUDES += SDL2-2.32.6/x86_64-w64-mingw32/include
+INCLUDES += $(P)/SDL2-2.32.6/x86_64-w64-mingw32/include $(P)/SDL2-2.32.6/x86_64-w64-mingw32/include/SDL2 $(P)/SDL2-2.32.6/SDL2_image-2.0.5/include
+LINKER_FLAGS += -L$(P)/SDL2-2.32.6/SDL2_image-2.0.5/lib/x64 -lSDL2_image -L$(P)/SDL2-2.32.6/x86_64-w64-mingw32/lib -lmingw32 -lSDL2 -Wl,-e,mainCRTStartup -mconsole
 VPATH := $(P)/demo
 DEFINES := -DVIRTUAL= -DDESIRED_GRID_SIZE=30u
 INTERNAL_LIBS := $(call internal-lib,$(PROJECT_NAME))

@@ -6,6 +6,8 @@
 //-----------------------------------------------------------------------------
 
 #include "Display/SDLHelper.hpp"
+#include <cstdarg>
+#include <cstdio>
 #include <ctype.h>
 
 #define GLYPH_WIDTH  (18)
