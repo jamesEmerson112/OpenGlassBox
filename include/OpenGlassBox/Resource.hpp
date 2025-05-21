@@ -12,6 +12,7 @@
 #  include <limits>
 #  include <vector>
 #  include <iostream> // operator<<
+#include <cstdint>
 
 //==============================================================================
 //! \brief Type of Resource ("Water", "Oil", "Electricty", "Citizen" ...)

@@ -9,6 +9,7 @@
 #  define OPEN_GLASSBOX_TYPES_HPP
 
 #  include "OpenGlassBox/Resources.hpp"
+#include <cstdint>
 
 //==========================================================================
 //! This file defines all types holding information after the parsing of a

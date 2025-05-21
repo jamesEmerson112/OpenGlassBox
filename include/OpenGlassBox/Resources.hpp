@@ -9,6 +9,7 @@
 #  define OPEN_GLASSBOX_RESOURCES_HPP
 
 #  include "OpenGlassBox/Resource.hpp"
+#include <cstdint>
 
 //==============================================================================
 //! \brief Resources come in a container. This class manages a collection of
