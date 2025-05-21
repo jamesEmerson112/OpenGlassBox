@@ -1,5 +1,8 @@
 //-----------------------------------------------------------------------------
 // Copyright (c) 2020 Quentin Quadrat.
+#ifdef _WIN32
+#  define SDL_MAIN_HANDLED
+#endif
 // https://github.com/Lecrapouille/OpenGlassBox
 // Based on https://github.com/federicodangelo/MultiAgentSimulation
 // Distributed under MIT License.

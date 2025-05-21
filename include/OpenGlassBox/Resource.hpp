@@ -8,6 +8,7 @@
 #ifndef OPEN_GLASSBOX_RESOURCE_HPP
 #  define OPEN_GLASSBOX_RESOURCE_HPP
 
+#  include <cstdint>
 #  include <string>
 #  include <limits>
 #  include <vector>

@@ -1,6 +1,7 @@
 ###################################################
 # Location of the project directory and Makefiles
 #
+-include ../local.mk
 P := ..
 M := $(P)/.makefile
 

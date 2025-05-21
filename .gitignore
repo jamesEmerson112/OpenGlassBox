@@ -45,3 +45,5 @@ _*
 *.exe
 *.out
 *.app
+local.mk
+BUILD_PROGRESS.md

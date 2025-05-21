@@ -8,6 +8,7 @@
 #ifndef OPEN_GLASSBOX_RESOURCES_HPP
 #  define OPEN_GLASSBOX_RESOURCES_HPP
 
+#  include <cstdint>
 #  include "OpenGlassBox/Resource.hpp"
 
 //==============================================================================

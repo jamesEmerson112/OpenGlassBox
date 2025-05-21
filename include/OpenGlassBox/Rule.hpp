@@ -8,6 +8,7 @@
 #ifndef OPEN_GLASSBOX_RULE_HPP
 #  define OPEN_GLASSBOX_RULE_HPP
 
+#  include <cstdint>
 #  include "OpenGlassBox/Types.hpp"
 #  include <cstdlib>
 #  include <stdexcept>
