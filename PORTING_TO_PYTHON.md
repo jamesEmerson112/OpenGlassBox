@@ -30,11 +30,164 @@
   - **A test runner script (`python/tests/test_all.py`) is provided to run all tests at once.**
   - **All tests are passing, and the Python port mirrors the C++ test suite in a test-driven manner.**
 
-- [ ] **3. Module Checklist**
-  - [ ] Data Classes & Utilities: Resource, RuleValue, Vector
-  - [ ] Core Entities: Agent, City, Unit, Map, Path, Node
-  - [ ] Simulation Logic: Simulation, Rule, RuleCommand, ScriptParser, Resources, Dijkstra, MapCoordinatesInsideRadius, MapRandomCoordinates
-  - [ ] Demo/UI: Port demo logic and choose a Python UI library
+- [ ] **3. Module Implementation Checklist**
+  - [ ] **Data Classes & Utilities**
+    - [ ] **Resource** (Resource.hpp/cpp → resource.py)
+      - [ ] Implement `Resource` class with proper type hints
+      - [ ] Ensure proper initialization with name and value
+      - [ ] Implement methods for modification and query (`Clone`, `Equals`, `ToString`)
+      - [ ] Add Python-specific utility methods and properties
+      - [ ] Complete type hints for all methods and properties
+      - [ ] Add comprehensive docstrings
+
+    - [ ] **RuleValue** (RuleValue.hpp/cpp → rule_value.py)
+      - [ ] Port `RuleValue` class with type annotations
+      - [ ] Implement different value types (constants, variables, operations)
+      - [ ] Add evaluation methods
+      - [ ] Implement ToString() and other debug utilities
+      - [ ] Add proper docstrings and type information
+      - [ ] Support operations (Add, Subtract, Multiply, Divide)
+
+    - [ ] **Vector** (Vector.hpp → vector.py)
+      - [ ] Create Vector2D class with type hints
+      - [ ] Implement methods for vector operations (+, -, *, /)
+      - [ ] Add utility methods (magnitude, normalization, etc.)
+      - [ ] Implement equality and comparison operations
+      - [ ] Add docstrings and examples
+
+  - [ ] **Core Entities**
+    - [ ] **Agent** (Agent.hpp/cpp → agent.py)
+      - [ ] Port `Agent` class with proper type hints
+      - [ ] Implement movement logic along paths
+      - [ ] Add resource carrying capability
+      - [ ] Implement update/simulation methods
+      - [ ] Add proper initialization and reset methods
+      - [ ] Ensure compatibility with Path and Resource classes
+      - [ ] Add relevant agent status properties (position, resources, etc.)
+
+    - [ ] **City** (City.hpp/cpp → city.py)
+      - [ ] Port `City` class with all methods and properties
+      - [ ] Implement map, path, and unit management
+      - [ ] Add agent tracking and management
+      - [ ] Implement entity creation methods
+      - [ ] Handle simulation step processing
+      - [ ] Ensure coordination of all simulation components
+      - [ ] Add docstrings and examples
+
+    - [ ] **Unit** (Unit.hpp/cpp → unit.py)
+      - [ ] Port `Unit` class with proper type hints
+      - [ ] Implement resource production/consumption logic
+      - [ ] Add agent creation capabilities
+      - [ ] Implement update/simulation methods
+      - [ ] Handle activation/deactivation logic
+      - [ ] Add proper initialization
+      - [ ] Connect with city and path components
+
+    - [ ] **Map** (Map.hpp/cpp → map.py)
+      - [ ] Implement base `Map` class
+      - [ ] Add grid functionality and coordinate system
+      - [ ] Implement map cell access and modification methods
+      - [ ] Create visualization utilities
+      - [ ] Support resource spread mechanisms
+      - [ ] Add map query operations
+      - [ ] Include bounds checking and safety mechanisms
+
+    - [ ] **Path** (Path.hpp/cpp → path.py)
+      - [ ] Port `Path` class with Node and Way components
+      - [ ] Implement path finding algorithms
+      - [ ] Add methods for path traversal and manipulation
+      - [ ] Ensure Node-Way connectivity is properly maintained
+      - [ ] Implement path queries and searches
+      - [ ] Add path utility methods (length, obstacles, etc.)
+
+    - [ ] **Node** (part of Path implementation → node.py)
+      - [ ] Create Node class for path nodes
+      - [ ] Implement connection management
+      - [ ] Add position and property data
+      - [ ] Include search-related metadata
+      - [ ] Add utility methods for node operations
+
+  - [ ] **Simulation Logic**
+    - [ ] **Simulation** (Simulation.hpp/cpp → simulation.py)
+      - [ ] Port `Simulation` class as main control system
+      - [ ] Implement simulation loop and update methods
+      - [ ] Add proper time management
+      - [ ] Create initialization and reset capabilities
+      - [ ] Implement rule processing and triggering
+      - [ ] Add event handling system
+      - [ ] Support saving/loading simulation state
+
+    - [ ] **Rule** (Rule.hpp/cpp → rule.py)
+      - [ ] Port `Rule` class with condition and action components
+      - [ ] Implement rule evaluation logic
+      - [ ] Add command execution capabilities
+      - [ ] Ensure proper rule triggering
+      - [ ] Add rule management utilities
+      - [ ] Include rule ordering and priority system
+
+    - [ ] **RuleCommand** (RuleCommand.hpp/cpp → rule_command.py)
+      - [ ] Port command types and execution logic
+      - [ ] Implement all command actions from C++ version
+      - [ ] Add parameter handling
+      - [ ] Create command factory methods
+      - [ ] Include execution context management
+      - [ ] Support command sequencing
+
+    - [ ] **ScriptParser** (ScriptParser.hpp/cpp → script_parser.py)
+      - [ ] Port script parsing functionality
+      - [ ] Implement token parsing and interpretation
+      - [ ] Add error handling and reporting
+      - [ ] Support comment handling
+      - [ ] Create utilities for script validation
+      - [ ] Add script debugging aids
+
+    - [ ] **Resources** (Resources.hpp/cpp → resources.py)
+      - [ ] Port `Resources` container class
+      - [ ] Implement collection management methods
+      - [ ] Add query and search capabilities
+      - [ ] Include resource manipulation operations
+      - [ ] Add serialization/deserialization support
+      - [ ] Implement resource transfer mechanisms
+
+    - [ ] **Dijkstra** (Dijkstra.hpp/cpp → dijkstra.py)
+      - [ ] Port pathfinding algorithm
+      - [ ] Implement priority queue and path tracking
+      - [ ] Add cost calculations
+      - [ ] Create path reconstruction
+      - [ ] Include optimizations for large graphs
+      - [ ] Support custom path cost functions
+
+    - [ ] **MapCoordinatesInsideRadius** (MapCoordinatesInsideRadius.hpp/cpp → map_coordinates_inside_radius.py)
+      - [ ] Port coordinate calculation within radius
+      - [ ] Implement efficient radius searches
+      - [ ] Add various radius shapes (circle, square)
+      - [ ] Support weighted searches
+      - [ ] Include boundary handling
+
+    - [ ] **MapRandomCoordinates** (MapRandomCoordinates.hpp/cpp → map_random_coordinates.py)
+      - [ ] Port random coordinate generation
+      - [ ] Implement various distribution patterns
+      - [ ] Add seed management for reproducibility
+      - [ ] Include bounds checking and validation
+      - [ ] Support constrained randomization
+
+  - [ ] **Demo/UI**
+    - [ ] **Choose Python UI Framework** (for demo.py)
+      - [ ] Research suitable Python UI frameworks (pygame, pyglet, kivy, etc.)
+      - [ ] Evaluate compatibility with simulation requirements
+      - [ ] Assess performance for real-time simulation rendering
+      - [ ] Consider cross-platform compatibility
+      - [ ] Determine learning curve and documentation quality
+
+    - [ ] **Port Demo Logic** (demo/src/* → demo.py)
+      - [ ] Create base application structure
+      - [ ] Implement rendering loop
+      - [ ] Add user input handling
+      - [ ] Port camera and view controls
+      - [ ] Implement entity visualization
+      - [ ] Create UI controls and panels
+      - [ ] Add simulation control interface
+      - [ ] Implement debug visualization options
 
 - [ ] **4. Testing & Validation**
   - [ ] Ensure all tests pass for each ported module
