@@ -1,5 +1,5 @@
 PROJECT_NAME := OpenGlassBox
 PROJECT_VERSION := 0.2.0
 COMPILATION_MODE := release
-CXX_STANDARD := --std=c++14
+CXX_STANDARD := --std=c++17
 PROJECT_DATA := demo/data

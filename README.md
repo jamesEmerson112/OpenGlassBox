@@ -10,6 +10,47 @@ I separated things because I was more interested in the simulation engine than t
 For rendering the demo application states,  I choosed SDL2 and DearImGui because this was
 the easier way for me but please, use your own personal/prefered rendering engine instead :)
 
+## Python Port (In Progress)
+
+A test-driven Python port of the OpenGlassBox simulation engine is underway in the `python/` directory.
+
+### Porting Approach
+
+- Each C++ test is ported to Python first, then the corresponding module is implemented to make the test pass.
+- The Python port uses modern Python tools (`dataclasses`, `typing`, `pytest`, etc.).
+- Progress is tracked in `PORTING_TO_PYTHON.md`.
+
+### Running Python Tests
+
+1. Set up the Python environment:
+    ```sh
+    cd OpenGlassBox
+    python3 -m venv python/venv
+    python/venv/bin/pip install pytest
+    ```
+
+2. Run all Python tests:
+    ```sh
+    python/venv/bin/python -m pytest python/tests/
+    ```
+
+3. Run a specific test file:
+    ```sh
+    python/venv/bin/python -m pytest python/tests/test_agent.py
+    ```
+
+### Porting Progress
+
+The following test modules have been ported and are passing:
+- `test_resource.py`
+- `test_agent.py`
+- `test_city.py`
+- `test_command.py`
+- `test_coord_inside_radius.py`
+
+See `PORTING_TO_PYTHON.md` for the full migration plan and checklist.
+
+---
 ## Screenshot of the standalone demo application
 
 Note: this screeenshot may not refer to the latest development state, which also depends on the loaded simulation script.
