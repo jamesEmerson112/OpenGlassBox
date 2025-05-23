@@ -1,3 +1,15 @@
+"""
+Test suite for the Agent class and related entities.
+
+This file covers:
+- Construction and initialization of Agent objects.
+- Relationships between Agent, Unit, Node, City, and supporting types.
+- Verification of member variables, type properties, and correct linkage.
+- Basic movement and position logic for Agent instances.
+
+The tests ensure that the Agent and its dependencies are correctly set up and that their initial state matches expectations from the original C++ simulation engine.
+"""
+
 import pytest
 
 # Minimal stubs for required classes

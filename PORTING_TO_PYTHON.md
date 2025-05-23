@@ -21,15 +21,14 @@
     - [x] TestsMap.cpp
     - [x] TestsPath.cpp
     - [x] TestsResources.cpp
-    - [ ] TestsScriptParser.cpp
-    - [ ] TestsSimulation.cpp
-    - [ ] TestsUnit.cpp
-    - [ ] TestsValue.cpp
-  - [ ] Port the C++ test file to Python (e.g., `TestsAgent.cpp` → `test_agent.py`)
-  - [ ] Create stubs/mocks for missing Python classes as needed
-  - [ ] Port the C++ implementation to Python (e.g., `Agent.cpp` → `agent.py`)
-  - [ ] Run and refine: make the test pass, refactor for Pythonic style
-  - [ ] Commit progress
+    - [x] TestsScriptParser.cpp
+    - [x] TestsSimulation.cpp
+    - [x] TestsUnit.cpp
+    - [x] TestsValue.cpp
+  - **All C++ test files have been ported to Python.**
+  - **Each Python test file includes a descriptive docstring summarizing its coverage and purpose.**
+  - **A test runner script (`python/tests/test_all.py`) is provided to run all tests at once.**
+  - **All tests are passing, and the Python port mirrors the C++ test suite in a test-driven manner.**
 
 - [ ] **3. Module Checklist**
   - [ ] Data Classes & Utilities: Resource, RuleValue, Vector

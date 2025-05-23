@@ -1,3 +1,15 @@
+"""
+Test suite for the Resources class (resource collections).
+
+This file covers:
+- Construction and initialization of Resources collections.
+- Adding, removing, and transferring resources between collections.
+- Capacity management, edge cases, and resource lookup logic.
+- Self-transfer and self-addition edge cases.
+
+The tests ensure that resource collections behave as expected for all basic operations, matching the logic and constraints of the original C++ simulation engine.
+"""
+
 import pytest
 
 class Resource:

@@ -1,3 +1,15 @@
+"""
+Test suite for the City class and related city infrastructure.
+
+This file covers:
+- Construction and initialization of City objects with various parameters.
+- Verification of member variables, grid sizes, and default values.
+- Methods for mapping world positions to city grid coordinates.
+- Edge cases for city construction and coordinate mapping.
+
+The tests ensure that City objects and their coordinate logic behave as expected, matching the simulation's requirements for city layout and spatial reasoning.
+"""
+
 import pytest
 
 # Minimal stubs for required classes

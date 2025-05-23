@@ -1,3 +1,14 @@
+"""
+Test suite for RuleCommand and related command classes.
+
+This file covers:
+- Construction and initialization of RuleCommandAdd, RuleCommandRemove, RuleCommandTest, and RuleCommandAgent.
+- Verification of member variables and correct linkage to targets and resources.
+- Basic logic for command validation and execution (stubbed for initial port).
+
+The tests ensure that command objects are correctly set up and that their initial state matches expectations from the original C++ simulation engine.
+"""
+
 import pytest
 
 # Minimal stubs for required classes

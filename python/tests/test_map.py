@@ -1,3 +1,15 @@
+"""
+Test suite for the Map class and map resource logic.
+
+This file covers:
+- Construction and initialization of Map objects with various parameters.
+- Resource management: setting, adding, removing, and capacity enforcement.
+- World position mapping and grid logic for map cells.
+- Edge cases for resource overflow, underflow, and per-cell capacity.
+
+The tests ensure that Map objects and their resource logic behave as expected, matching the simulation's requirements for spatial resource management.
+"""
+
 import pytest
 
 # Minimal stubs for required classes

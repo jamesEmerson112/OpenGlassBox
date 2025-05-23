@@ -1,3 +1,14 @@
+"""
+Test suite for MapCoordinatesInsideRadius (MCIR) and coordinate logic.
+
+This file covers:
+- Compression and decompression of map coordinates.
+- Initialization and iteration of relative coordinates within a radius.
+- Edge cases for zero and unit radius, and coordinate mapping logic.
+
+The tests ensure that MCIR's coordinate handling and radius logic match the expectations and edge cases of the original C++ simulation engine.
+"""
+
 import pytest
 
 class MapCoordinatesInsideRadius:

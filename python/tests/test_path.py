@@ -1,3 +1,14 @@
+"""
+Test suite for the Path, Node, and Way classes (graph structure).
+
+This file covers:
+- Construction and initialization of Node and Way objects.
+- Path construction, node/way addition, and graph relationships.
+- Verification of member variables, connectivity, and geometric properties.
+
+The tests ensure that the graph structure for paths, nodes, and ways is correctly set up and that their initial state matches expectations from the original C++ simulation engine.
+"""
+
 import pytest
 import math
 

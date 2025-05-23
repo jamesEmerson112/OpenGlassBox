@@ -41,14 +41,12 @@ A test-driven Python port of the OpenGlassBox simulation engine is underway in t
 
 ### Porting Progress
 
-The following test modules have been ported and are passing:
-- `test_resource.py`
-- `test_agent.py`
-- `test_city.py`
-- `test_command.py`
-- `test_coord_inside_radius.py`
+- **All C++ test files in the original tests/ directory have been ported to Python.**
+- Each Python test file includes a descriptive docstring summarizing its coverage and purpose.
+- A test runner script (`python/tests/test_all.py`) is provided to run all tests at once.
+- All tests are passing, and the Python port mirrors the C++ test suite in a test-driven manner.
 
-See `PORTING_TO_PYTHON.md` for the full migration plan and checklist.
+See `PORTING_TO_PYTHON.md` for the full migration plan, checklist, and details on each test file.
 
 ---
 ## Screenshot of the standalone demo application

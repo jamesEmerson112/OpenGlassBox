@@ -1,3 +1,15 @@
+"""
+Test suite for the Resource class.
+
+This file covers:
+- Construction and initialization of Resource objects.
+- Verification of member variables, type properties, and correct default values.
+- Methods for adding, removing, and transferring resource amounts.
+- Capacity management and edge cases for resource handling.
+
+The tests ensure that Resource objects behave as expected for all basic operations, matching the logic and constraints of the original C++ simulation engine.
+"""
+
 import pytest
 
 # Minimal stub for Resource to allow tests to run
