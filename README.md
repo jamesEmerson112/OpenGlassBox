@@ -45,6 +45,20 @@ A test-driven Python port of the OpenGlassBox simulation engine is underway in t
 - Each Python test file includes a descriptive docstring summarizing its coverage and purpose.
 - A test runner script (`python/tests/test_all.py`) is provided to run all tests at once.
 - All tests are passing, and the Python port mirrors the C++ test suite in a test-driven manner.
+- **Implementation Progress:**
+  - **Phase 1-2 (Completed)**: Foundation data classes (Resource, RuleValue, Vector) are implemented.
+  - **Phase 3 (In Progress)**: Following a bottom-up approach based on dependency hierarchy:
+    - **Phase 3A (Next)**: Spatial foundation components:
+      - Map implementation with grid functionality and resource tracking
+      - Path implementation with Node/Way graph structure and pathfinding
+    - **Phase 3B**: Entity components:
+      - Unit implementation for stationary simulation entities
+      - Agent implementation for mobile resource carriers
+      - Resources container implementation
+    - **Phase 3C**: Coordination container:
+      - City implementation as the central management class
+  - **Phase 4 (Planned)**: Simulation logic and rules
+  - **Phase 5 (Future)**: Demo and visualization
 
 See `PORTING_TO_PYTHON.md` for the full migration plan, checklist, and details on each test file.
 

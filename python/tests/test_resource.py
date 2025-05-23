@@ -11,50 +11,7 @@ The tests ensure that Resource objects behave as expected for all basic operatio
 """
 
 import pytest
-
-# Minimal stub for Resource to allow tests to run
-class Resource:
-    MAX_CAPACITY = 2**32 - 1  # Placeholder, adjust as needed
-
-    def __init__(self, resource_type):
-        self.m_type = resource_type
-        self.m_amount = 0
-        self.m_capacity = Resource.MAX_CAPACITY
-
-    def getAmount(self):
-        return self.m_amount
-
-    def hasAmount(self):
-        return self.m_amount > 0
-
-    def getCapacity(self):
-        return self.m_capacity
-
-    def type(self):
-        return self.m_type
-
-    def add(self, amount):
-        if self.m_capacity == Resource.MAX_CAPACITY:
-            self.m_amount += amount
-            if self.m_amount > Resource.MAX_CAPACITY:
-                self.m_amount = Resource.MAX_CAPACITY
-        else:
-            self.m_amount = min(self.m_amount + amount, self.m_capacity)
-
-    def setCapacity(self, capacity):
-        self.m_capacity = capacity
-        if self.m_amount > self.m_capacity:
-            self.m_amount = self.m_capacity
-
-    def remove(self, amount):
-        self.m_amount = max(0, self.m_amount - amount)
-
-    def transferTo(self, other):
-        available_space = other.m_capacity - other.m_amount
-        transfer_amount = min(self.m_amount, available_space)
-        if transfer_amount > 0:
-            other.m_amount += transfer_amount
-            self.m_amount -= transfer_amount
+from resource import Resource
 
 def test_constants():
     assert Resource.MAX_CAPACITY >= 65535
