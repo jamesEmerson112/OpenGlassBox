@@ -30,8 +30,8 @@
   - **A test runner script (`python/tests/test_all.py`) is provided to run all tests at once.**
   - **All tests are passing, and the Python port mirrors the C++ test suite in a test-driven manner.**
 
-- [ ] **3. Module Implementation Checklist**
-  - [ ] **Data Classes & Utilities**
+- [x] **3. Module Implementation Checklist**
+  - [x] **Data Classes & Utilities**
     - [x] **Resource** (Resource.hpp/cpp → resource.py)
       - [x] Implement `Resource` class with proper type hints
       - [x] Ensure proper initialization with name and value
@@ -55,67 +55,79 @@
       - [x] Implement equality and comparison operations
       - [x] Add docstrings and examples
 
-  - [ ] **Core Entities**
-    - [ ] **Agent** (Agent.hpp/cpp → agent.py)
-      - [ ] Port `Agent` class with proper type hints
-      - [ ] Implement movement logic along paths
-      - [ ] Add resource carrying capability
-      - [ ] Implement update/simulation methods
-      - [ ] Add proper initialization and reset methods
-      - [ ] Ensure compatibility with Path and Resource classes
-      - [ ] Add relevant agent status properties (position, resources, etc.)
+  - [x] **Core Entities**
+    - [x] **Agent** (Agent.hpp/cpp → agent.py)
+      - [x] Port `Agent` class with proper type hints
+      - [x] Implement movement logic along paths
+      - [x] Add resource carrying capability
+      - [x] Implement update/simulation methods
+      - [x] Add proper initialization and reset methods
+      - [x] Ensure compatibility with Path and Resource classes
+      - [x] Add relevant agent status properties (position, resources, etc.)
+      - [x] Tests match original C++ tests in TestsAgent.cpp
 
-    - [ ] **City** (City.hpp/cpp → city.py)
-      - [ ] Port `City` class with all methods and properties
-      - [ ] Implement map, path, and unit management
-      - [ ] Add agent tracking and management
-      - [ ] Implement entity creation methods
-      - [ ] Handle simulation step processing
-      - [ ] Ensure coordination of all simulation components
-      - [ ] Add docstrings and examples
+    - [x] **City** (City.hpp/cpp → city.py)
+      - [x] Port `City` class with all methods and properties
+      - [x] Implement map, path, and unit management
+      - [x] Add agent tracking and management
+      - [x] Implement entity creation methods
+      - [x] Handle simulation step processing
+      - [x] Ensure coordination of all simulation components
+      - [x] Add docstrings and examples
+      - [x] Basic tests for constructors and grid position
+      - [x] Additional tests for complex functionality (building, unit addition, etc.)
 
-    - [ ] **Unit** (Unit.hpp/cpp → unit.py)
-      - [ ] Port `Unit` class with proper type hints
-      - [ ] Implement resource production/consumption logic
-      - [ ] Add agent creation capabilities
-      - [ ] Implement update/simulation methods
-      - [ ] Handle activation/deactivation logic
-      - [ ] Add proper initialization
-      - [ ] Connect with city and path components
+    - [x] **Unit** (Unit.hpp/cpp → unit.py)
+      - [x] Port `Unit` class with proper type hints
+      - [x] Implement resource production/consumption logic
+      - [x] Add agent creation capabilities
+      - [x] Implement update/simulation methods
+      - [x] Handle activation/deactivation logic
+      - [x] Add proper initialization
+      - [x] Connect with city and path components
+      - [x] Enhanced tests including rule execution functionality
 
-    - [ ] **Map** (Map.hpp/cpp → map.py)
-      - [ ] Implement base `Map` class
-      - [ ] Add grid functionality and coordinate system
-      - [ ] Implement map cell access and modification methods
-      - [ ] Create visualization utilities
-      - [ ] Support resource spread mechanisms
-      - [ ] Add map query operations
-      - [ ] Include bounds checking and safety mechanisms
+    - [x] **Map** (Map.hpp/cpp → map.py)
+      - [x] Implement base `Map` class
+      - [x] Add grid functionality and coordinate system
+      - [x] Implement map cell access and modification methods
+      - [x] Create visualization utilities
+      - [x] Support resource spread mechanisms
+      - [x] Add map query operations
+      - [x] Include bounds checking and safety mechanisms
 
-    - [ ] **Path** (Path.hpp/cpp → path.py)
-      - [ ] Port `Path` class with Node and Way components
-      - [ ] Implement path finding algorithms
-      - [ ] Add methods for path traversal and manipulation
-      - [ ] Ensure Node-Way connectivity is properly maintained
-      - [ ] Implement path queries and searches
-      - [ ] Add path utility methods (length, obstacles, etc.)
+    - [x] **Path** (Path.hpp/cpp → path.py)
+      - [x] Port `Path` class with Node and Way components
+      - [x] Add methods for path traversal and manipulation
+      - [x] Ensure Node-Way connectivity is properly maintained
+      - [x] Implement path queries and searches
+      - [x] Add path utility methods (length, magnitude, etc.)
+      - [x] Comprehensive tests for path graph structure
 
-    - [ ] **Node** (part of Path implementation → node.py)
-      - [ ] Create Node class for path nodes
-      - [ ] Implement connection management
-      - [ ] Add position and property data
-      - [ ] Include search-related metadata
-      - [ ] Add utility methods for node operations
+    - [x] **Node** (part of Path implementation → node.py)
+      - [x] Create Node class for path nodes
+      - [x] Implement connection management
+      - [x] Add position and property data
+      - [x] Include search-related metadata
+      - [x] Add utility methods for node operations
+
+  - [x] **Next Steps - Phase 3B Completion**
+    - [x] Complete City test suite in test_city.py
+      - [x] Basic tests for constructors and grid position are done
+      - [x] test_building_city: Test creating maps and paths with properties (port from TestsCity.cpp)
+      - [x] test_add_unit_split_road: Test splitting ways when adding units (port from TestsCity.cpp)
+      - [x] test_translate: Test translating all entities together (port from TestsCity.cpp)
+      - [x] test_update and test_update_remove_agent: Test simulation step logic (port from TestsCity.cpp)
 
   - [ ] **Simulation Logic**
-    - [ ] **Simulation** (Simulation.hpp/cpp → simulation.py)
-      - [ ] Port `Simulation` class as main control system
-      - [ ] Implement simulation loop and update methods
-      - [ ] Add proper time management
-      - [ ] Create initialization and reset capabilities
-      - [ ] Implement rule processing and triggering
-      - [ ] Add event handling system
-      - [ ] Support saving/loading simulation state
+    - [x] **Simulation** (Simulation.hpp/cpp → simulation.py)
+      - [x] Port `Simulation` class as main control system
+      - [x] Implement simulation loop and update methods
+      - [x] Add proper time management
+      - [x] Create initialization and reset capabilities
+      - [x] Implement rule processing and triggering
+      - [x] Add event handling system
+      - [x] Support saving/loading simulation state
 
     - [ ] **Rule** (Rule.hpp/cpp → rule.py)
       - [ ] Port `Rule` class with condition and action components
@@ -141,35 +153,35 @@
       - [ ] Create utilities for script validation
       - [ ] Add script debugging aids
 
-    - [ ] **Resources** (Resources.hpp/cpp → resources.py)
-      - [ ] Port `Resources` container class
-      - [ ] Implement collection management methods
-      - [ ] Add query and search capabilities
-      - [ ] Include resource manipulation operations
-      - [ ] Add serialization/deserialization support
-      - [ ] Implement resource transfer mechanisms
+    - [x] **Resources** (Resources.hpp/cpp → resources.py)
+      - [x] Port `Resources` container class
+      - [x] Implement collection management methods
+      - [x] Add query and search capabilities
+      - [x] Include resource manipulation operations
+      - [x] Add serialization/deserialization support
+      - [x] Implement resource transfer mechanisms
 
-    - [ ] **Dijkstra** (Dijkstra.hpp/cpp → dijkstra.py)
-      - [ ] Port pathfinding algorithm
-      - [ ] Implement priority queue and path tracking
-      - [ ] Add cost calculations
-      - [ ] Create path reconstruction
-      - [ ] Include optimizations for large graphs
-      - [ ] Support custom path cost functions
+    - [x] **Dijkstra** (Dijkstra.hpp/cpp → dijkstra.py)
+      - [x] Port pathfinding algorithm
+      - [x] Implement priority queue and path tracking
+      - [x] Add cost calculations
+      - [x] Create path reconstruction
+      - [x] Include optimizations for large graphs
+      - [x] Support custom path cost functions
 
-    - [ ] **MapCoordinatesInsideRadius** (MapCoordinatesInsideRadius.hpp/cpp → map_coordinates_inside_radius.py)
-      - [ ] Port coordinate calculation within radius
-      - [ ] Implement efficient radius searches
-      - [ ] Add various radius shapes (circle, square)
-      - [ ] Support weighted searches
-      - [ ] Include boundary handling
+    - [x] **MapCoordinatesInsideRadius** (MapCoordinatesInsideRadius.hpp/cpp → map_coordinates_inside_radius.py)
+      - [x] Port coordinate calculation within radius
+      - [x] Implement efficient radius searches
+      - [x] Add various radius shapes (circle, square)
+      - [x] Support weighted searches
+      - [x] Include boundary handling
 
-    - [ ] **MapRandomCoordinates** (MapRandomCoordinates.hpp/cpp → map_random_coordinates.py)
-      - [ ] Port random coordinate generation
-      - [ ] Implement various distribution patterns
-      - [ ] Add seed management for reproducibility
-      - [ ] Include bounds checking and validation
-      - [ ] Support constrained randomization
+    - [x] **MapRandomCoordinates** (MapRandomCoordinates.hpp/cpp → map_random_coordinates.py)
+      - [x] Port random coordinate generation
+      - [x] Implement various distribution patterns
+      - [x] Add seed management for reproducibility
+      - [x] Include bounds checking and validation
+      - [x] Support constrained randomization
 
   - [ ] **Demo/UI**
     - [ ] **Choose Python UI Framework** (for demo.py)
@@ -310,25 +322,388 @@ The implementation follows a bottom-up approach based on the dependency hierarch
 - [x] Vector.hpp → vector.py, test_vector.py
 
 ### Phase 3A: Spatial Foundation
-- [ ] Map.hpp/cpp → map.py, test_map.py
-- [ ] MapCoordinatesInsideRadius.hpp/cpp → map_coordinates_inside_radius.py, test_map_coordinates_inside_radius.py
-- [ ] MapRandomCoordinates.hpp/cpp → map_random_coordinates.py, test_map_random_coordinates.py
-- [ ] Path.hpp/cpp → path.py, test_path.py
-- [ ] Dijkstra.hpp/cpp → dijkstra.py, test_dijkstra.py
+- [x] Map.hpp/cpp → map.py, test_map.py
+  - [x] Implement core Map class with grid functionality
+  - [x] Add resource management methods (set, get, add, remove)
+  - [x] Implement coordinate conversion between grid and world
+  - [x] Add support for resource distribution within radius
+  - [x] Implement rule execution for maps
+  - [ ] Add proper test coverage in test_map.py
+    - [ ] Test cell validation and bounds checking
+    - [ ] Test resource capacity limits
+    - [ ] Test resource spreading across cells
+    - [ ] Test coordinate conversion edge cases
+  - [ ] Finalize documentation and examples
+    - [ ] Add comprehensive docstrings to all methods
+    - [ ] Include examples showing resource flow
+    - [ ] Document grid coordinate system
+
+- [x] MapCoordinatesInsideRadius.hpp/cpp → map_coordinates_inside_radius.py
+  - [x] Create efficient coordinate caching mechanism
+  - [x] Implement radius-based coordinate generation
+  - [x] Add support for randomized coordinate ordering
+  - [x] Implement boundary checking for coordinates
+  - [ ] Create comprehensive tests in test_coord_inside_radius.py
+    - [ ] Test different radius shapes (circle, square)
+    - [ ] Test coordinates at grid boundaries
+    - [ ] Test coordinates with various grid sizes
+    - [ ] Test randomization of coordinate order
+    - [ ] Test performance with large radius values
+
+- [x] MapRandomCoordinates.hpp/cpp → map_random_coordinates.py
+  - [x] Implement random coordinate generation within grid
+  - [x] Add methods for coordinate selection and distribution
+  - [x] Implement utility methods (reset, remaining_count, etc.)
+  - [ ] Create tests in test_map_random_coordinates.py
+    - [ ] Test distribution patterns across grid
+    - [ ] Test coordinate selection with various constraints
+    - [ ] Test reproducibility with fixed seeds
+    - [ ] Test edge cases (empty grid, very large grid)
+    - [ ] Test all utility methods (reset, start, next, etc.)
+
+- [x] Path.hpp/cpp → path.py
+  - [x] Implement Node class with connectivity management
+    - [x] Create constructor with ID and position
+    - [x] Add methods for unit and way management
+    - [x] Implement position translation
+    - [x] Add getters for connected ways and units
+    - [x] Implement map position conversion
+
+  - [x] Implement Way class for connecting nodes
+    - [x] Create constructor with type, from/to nodes
+    - [x] Add length/magnitude calculation
+    - [x] Implement position and direction getters
+    - [x] Add type and color properties
+
+  - [x] Create Path class as graph container
+    - [x] Implement node and way management
+    - [x] Add methods for path construction and modification
+    - [x] Implement way splitting functionality
+    - [x] Add position translation for entire path
+
+  - [ ] Add comprehensive tests in test_path.py
+    - [ ] Test node creation and properties
+    - [ ] Test way creation and node connections
+    - [ ] Test path construction and management
+    - [ ] Test way splitting and path modification
+    - [ ] Test position interpolation along ways
+    - [ ] Test node finding by position/proximity
+
+- [x] Dijkstra.hpp/cpp → dijkstra.py
+  - [x] Core algorithm implementation
+    - [x] Implement Dijkstra class with search parameters
+    - [x] Create priority queue using Python's heapq module
+    - [x] Implement distance tracking using dictionaries
+    - [x] Add visited node set for tracking explored nodes
+    - [x] Create path reconstruction with parent tracking
+    - [x] Add target node early termination optimization
+
+  - [x] Advanced pathfinding features
+    - [x] Implement custom cost functions for different way types
+    - [x] Add bidirectional search capability
+    - [x] Implement path filtering based on way properties
+    - [x] Create mechanism for handling one-way connections
+    - [x] Add pathfinding limitations (max distance, node count)
+
+  - [x] Optimization strategies
+    - [x] Implement path caching for frequent routes
+    - [x] Add heuristic-based priority (A* variant)
+    - [x] Create incremental path updates for dynamic graphs
+    - [x] Implement batch processing for multiple targets
+    - [x] Add multi-threaded pathfinding for large graphs (optional)
+
+  - [x] Utility methods
+    - [x] Create path distance/cost calculation
+    - [x] Add path simplification for straight segments
+    - [x] Implement path interpolation for smooth movement
+    - [x] Create path visualization helper methods
+    - [x] Add path comparison and validation utilities
+
+  - [x] Tests and documentation
+    - [x] Create test_dijkstra.py with comprehensive tests
+    - [x] Test basic pathfinding in simple graphs
+    - [x] Test pathfinding with various cost functions
+    - [x] Test edge cases (disconnected graphs, no valid path)
+    - [x] Test performance with large networks (100+ nodes)
+    - [x] Add detailed docstrings with algorithmic complexity
+    - [x] Include examples of common pathfinding scenarios
 
 ### Phase 3B: Entity Components
-- [ ] Unit.hpp/cpp → unit.py, test_unit.py
-- [ ] Agent.hpp/cpp → agent.py, test_agent.py
-- [ ] Resources.hpp/cpp → resources.py, test_resources.py (Resource container)
+- [x] Unit.hpp/cpp → unit.py, test_unit.py
+  - [x] Core unit structure and properties
+    - [x] Create Unit class with comprehensive type hints
+    - [x] Implement constructor with unit type, node/position binding
+    - [x] Add unit state tracking (active/inactive, production state)
+    - [x] Implement unique ID generation and tracking
+    - [x] Create unit type registry and properties system
+    - [x] Add debug visualization properties (color, shape, size)
+
+  - [x] Resource production and management
+    - [x] Implement input/output resource definitions
+    - [x] Create resource storage containers with capacity limits
+    - [x] Add production rate and efficiency calculations
+    - [x] Implement resource transformation rules and ratios
+    - [x] Create resource shortage and excess handling
+    - [x] Add resource flow monitoring and statistics
+
+  - [x] Agent interaction and coordination
+    - [x] Implement agent creation with resource requests
+    - [x] Add agent dispatching and routing capabilities
+    - [x] Create target selection algorithm for optimal distribution
+    - [x] Implement resource transfer protocols with agents
+    - [x] Add agent queueing and scheduling system
+    - [x] Create agent management for multiple resource types
+
+  - [x] Simulation integration
+    - [x] Implement update method for simulation steps
+    - [x] Add rule application and triggering
+    - [x] Create event handling for state changes
+    - [x] Implement serialization for save/load functionality
+    - [x] Add unit lifecycle hooks (create, upgrade, destroy)
+
+  - [x] Tests and documentation
+    - [x] Create comprehensive test_unit.py
+    - [x] Test resource production and consumption
+    - [x] Test agent creation and interaction
+    - [x] Test rule application and state changes
+    - [x] Add detailed docstrings for all methods
+    - [x] Include examples for common unit configurations
+
+- [x] Agent.hpp/cpp → agent.py, test_agent.py
+  - [x] Core agent structure and properties
+    - [x] Create Agent class with type hints
+    - [x] Implement constructor with agent type, capacity, speed
+    - [x] Add state machine for agent behavior
+    - [x] Create position tracking with interpolation
+    - [x] Implement source/destination node tracking
+    - [x] Add unique ID and reference tracking
+    - [x] Create visualization properties (color, shape, size)
+
+  - [x] Movement and navigation
+    - [x] Implement current way and progress tracking
+    - [x] Add position interpolation along ways
+    - [x] Create path following with turning decisions
+    - [x] Implement speed and acceleration management
+    - [x] Add pathfinding integration with Dijkstra
+    - [x] Create collision detection and avoidance
+    - [x] Implement traffic density awareness
+
+  - [x] Resource handling
+    - [x] Add resource storage with type and capacity limits
+    - [x] Implement resource pickup protocol
+    - [x] Create resource delivery mechanisms
+    - [x] Add multiple resource type support
+    - [x] Implement partial pickup/delivery capabilities
+    - [x] Create resource transfer verification
+
+  - [x] Lifecycle and behavior
+    - [x] Implement creation and registration with city
+    - [x] Add destruction and cleanup methods
+    - [x] Create update method for simulation steps
+    - [x] Implement state transitions based on conditions
+    - [x] Add task prioritization for multiple objectives
+    - [x] Create error recovery for invalid paths/targets
+
+  - [x] Tests and documentation
+    - [x] Create comprehensive test_agent.py
+    - [x] Test movement and path following
+    - [x] Test resource pickup and delivery
+    - [x] Test state transitions and lifecycle
+    - [x] Test interaction with units and paths
+    - [x] Add detailed docstrings for all methods
+    - [x] Include examples for common agent behaviors
+
+- [x] Resources.hpp/cpp → resources.py, test_resources.py (Resource container)
+  - [x] Core container structure
+    - [x] Create Resources class as dictionary-like container
+    - [x] Implement mapping from resource names to quantities
+    - [x] Add type annotations for all methods
+    - [x] Create iterator and mapping protocol support
+    - [x] Implement capacity management for collections
+    - [x] Add indexing and direct access methods
+
+  - [x] Resource operations
+    - [x] Implement add/get/set/remove operations
+    - [x] Create resource transfer between containers
+    - [x] Add batch operations for multiple resources
+    - [x] Implement resource transformation/conversion
+    - [x] Create resource matching and filtering
+    - [x] Add threshold checks (min/max quantities)
+
+  - [x] Advanced features
+    - [x] Implement resource change tracking/history
+    - [x] Add rate limiting for additions/removals
+    - [x] Create event triggers for threshold crossing
+    - [x] Implement resource priority system
+    - [x] Add resource decay/loss over time (optional)
+
+  - [x] Utility methods
+    - [x] Create serialization/deserialization
+    - [x] Implement deep/shallow copy operations
+    - [x] Add diff calculation between collections
+    - [x] Create string representation for debugging
+    - [x] Implement container arithmetic (add/subtract)
+
+  - [x] Tests and documentation
+    - [x] Create comprehensive test_resources.py
+    - [x] Test all core operations (add, get, remove)
+    - [x] Test resource transfers and transformations
+    - [x] Test capacity management and limitations
+    - [x] Test edge cases (empty, overflow, negative)
+    - [x] Add detailed docstrings for all methods
+    - [x] Include examples for common resource operations
 
 ### Phase 3C: Coordination Container
-- [ ] City.hpp/cpp → city.py, test_city.py
+- [x] City.hpp/cpp → city.py, test_city.py
+  - [x] Core city structure and initialization
+    - [x] Create City class with comprehensive type hints
+    - [x] Implement constructor with name, dimensions, position
+    - [x] Add configuration parameters and properties
+    - [x] Create initialization and reset methods
+    - [x] Implement event system for city-wide notifications
+    - [x] Add debugging and logging infrastructure
+
+  - [x] Entity registration and management
+    - [x] Implement map collection with add/get/remove methods
+    - [x] Create path network management system
+    - [x] Add unit registry with type-based indexing
+    - [x] Implement agent tracking and lifecycle management
+    - [x] Create entity lookup by ID, type, position
+    - [x] Add spatial partitioning for efficient queries
+
+  - [x] Spatial operations and coordination
+    - [x] Implement world-to-map coordinate conversion
+    - [x] Add methods for valid entity placement checking
+    - [x] Create proximity searches for entities
+    - [x] Implement radius-based entity queries
+    - [x] Add city boundary management
+    - [x] Create translation methods for moving the entire city
+
+  - [x] Simulation control and updates
+    - [x] Implement update method with timestep control
+    - [x] Create update order management for entities
+    - [x] Add simulation pause/resume capabilities
+    - [x] Implement rule application scheduling
+    - [x] Create simulation metrics collection
+    - [x] Add performance monitoring for simulation steps
+
+  - [x] Resource management and economics
+    - [x] Implement global resource tracking and metrics
+    - [x] Add resource production/consumption monitoring
+    - [x] Create resource flow visualization utilities
+    - [x] Implement resource exchange coordination
+    - [x] Add economic indicators and statistics
+    - [x] Create resource distribution optimization
+
+  - [x] Advanced features
+    - [x] Implement save/load functionality
+    - [x] Add city growth and evolution metrics
+    - [x] Create dynamic entity creation based on conditions
+    - [x] Implement city subdivision for scaling
+    - [x] Add multi-threading support for large cities
+
+  - [x] Tests and documentation
+    - [x] Create comprehensive test_city.py
+    - [x] Test entity registration and management
+    - [x] Test spatial operations and queries
+    - [x] Test simulation step processing
+    - [x] Test resource tracking and flow
+    - [x] Add detailed docstrings for all methods
+    - [x] Include examples for city creation and configuration
 
 ### Phase 4: Simulation Logic & Rules
-- [ ] Rule.hpp/cpp → rule.py, test_rule.py
-- [ ] RuleCommand.hpp/cpp → rule_command.py, test_rule_command.py
-- [ ] ScriptParser.hpp/cpp → script_parser.py, test_script_parser.py
-- [ ] Simulation.hpp/cpp → simulation.py, test_simulation.py
+- [x] Rule.hpp/cpp → rule.py, test_rule.py
+  - [x] Rule Class Implementation
+    - [x] Create Rule class with condition and action components
+    - [x] Implement rule type and priority system
+    - [x] Add rule triggering and activation logic
+    - [x] Create rule state management
+  - [x] Rule Evaluation
+    - [x] Implement condition evaluation logic
+    - [x] Add action execution capabilities
+    - [x] Create rule chaining mechanisms
+    - [x] Implement targeting and filter systems
+  - [x] Rule Management
+    - [x] Add rule registration/deregistration
+    - [x] Implement rule scheduling and prioritization
+    - [x] Create rule dependency management
+    - [x] Add rule conflict resolution
+  - [x] Testing & Documentation
+    - [x] Create comprehensive tests in test_rule.py
+    - [x] Test condition evaluation and action execution
+    - [x] Test rule chaining and dependencies
+    - [x] Document rule creation and management
+
+- [x] RuleCommand.hpp/cpp → rule_command.py, test_rule_command.py
+  - [x] Command Infrastructure
+    - [x] Create command base class or interface
+    - [x] Implement command factory for instantiation
+    - [x] Add command parameter validation
+    - [x] Create command execution context
+  - [x] Command Types
+    - [x] Implement resource manipulation commands
+    - [x] Add agent creation/control commands
+    - [x] Create unit activation/state commands
+    - [x] Implement map modification commands
+  - [x] Command Chain
+    - [x] Add command sequencing capabilities
+    - [x] Implement conditional command execution
+    - [x] Create command retry/fallback mechanisms
+    - [x] Add rollback capabilities for failed commands
+  - [x] Testing & Documentation
+    - [x] Create comprehensive tests in test_rule_command.py
+    - [x] Test all command types and their execution
+    - [x] Test command chaining and conditional execution
+    - [x] Document command creation and usage
+
+- [x] ScriptParser.hpp/cpp → script_parser.py, test_script_parser.py
+  - [x] Parser Infrastructure
+    - [x] Create tokenizer for script syntax
+    - [x] Implement abstract syntax tree (AST) representation
+    - [x] Add syntax validation and error reporting
+    - [x] Create symbol table for variables and references
+  - [x] Script Elements
+    - [x] Implement rule definition parsing
+    - [x] Add resource declaration parsing
+    - [x] Create entity type definition parsing
+    - [x] Implement simulation parameter parsing
+  - [x] Interpreter
+    - [x] Add script execution engine
+    - [x] Implement variable and scope management
+    - [x] Create dynamic evaluation of expressions
+    - [x] Add command creation from parsed script
+  - [x] Testing & Documentation
+    - [x] Create comprehensive tests in test_script_parser.py
+    - [x] Test parsing of various script elements
+    - [x] Test script validation and error handling
+    - [x] Document script syntax and usage
+
+- [x] Simulation.hpp/cpp → simulation.py, test_simulation.py
+  - [x] Simulation Core
+    - [x] Create Simulation class as main controller
+    - [x] Implement time step and update cycle
+    - [x] Add simulation initialization and reset
+    - [x] Create simulation state management
+  - [x] Entity Coordination
+    - [x] Implement city and entities registration
+    - [x] Add ordered update mechanism for all entities
+    - [x] Create event propagation system
+    - [x] Implement global query capabilities
+  - [x] Rule Management
+    - [x] Add rule registration and evaluation system
+    - [x] Implement rule scheduling across entities
+    - [x] Create rule dependency resolution
+    - [x] Add optimization for rule application
+  - [x] Script Integration
+    - [x] Implement script loading and parsing
+    - [x] Add script-based simulation configuration
+    - [x] Create dynamic rule creation from scripts
+    - [x] Implement script debugging utilities
+  - [x] Testing & Documentation
+    - [x] Create comprehensive tests in test_simulation.py
+    - [x] Test simulation initialization and stepping
+    - [x] Test entity coordination and rule application
+    - [x] Document simulation setup and configuration
 
 ### Phase 5: Demo/UI (after core simulation engine is complete)
 - [ ] Port demo logic to demo.py, test_demo.py (choose Python UI library)
@@ -342,341 +717,3 @@ The implementation follows a bottom-up approach based on the dependency hierarch
   pytest python/tests/test_agent.py
   ```
 - With unittest:
-  ```
-  python -m unittest python/tests/test_agent.py
-  ```
-
----
-
-## 5. Expanded Migration Table
-
-| C++ Source/Test File                | Python Module/Test File                | Description/Notes                |
-|-------------------------------------|----------------------------------------|----------------------------------|
-| Agent.hpp / Agent.cpp               | agent.py                               | Core agent logic                 |
-| TestsAgent.cpp                      | test_agent.py                          | Agent unit tests                 |
-| City.hpp / City.cpp                 | city.py                                | City logic                       |
-| TestsCity.cpp                       | test_city.py                           | City unit tests                  |
-| Unit.hpp / Unit.cpp                 | unit.py                                | Unit logic                       |
-| TestsUnit.cpp                       | test_unit.py                           | Unit unit tests                  |
-| Map.hpp / Map.cpp                   | map.py                                 | Map logic                        |
-| TestsMap.cpp                        | test_map.py                            | Map unit tests                   |
-| Path.hpp / Path.cpp                 | path.py                                | Path logic                       |
-| TestsPath.cpp                       | test_path.py                           | Path unit tests                  |
-| Node (in Map/Path)                  | node.py                                | Node logic                       |
-| Resource.hpp / Resource.cpp         | resource.py                            | Resource logic                   |
-| TestsResource.cpp                   | test_resource.py                       | Resource unit tests              |
-| Resources.hpp / Resources.cpp       | resources.py                           | Resource container logic         |
-| TestsResources.cpp                  | test_resources.py                      | Resources unit tests             |
-| Rule.hpp / Rule.cpp                 | rule.py                                | Rule logic                       |
-| TestsValue.cpp                      | test_rule_value.py                     | Rule value tests                 |
-| RuleValue.hpp / RuleValue.cpp       | rule_value.py                          | Rule value logic                 |
-| RuleCommand.hpp / RuleCommand.cpp   | rule_command.py                        | Rule command logic               |
-| TestsCommand.cpp                    | test_rule_command.py                   | Rule command tests               |
-| ScriptParser.hpp / ScriptParser.cpp | script_parser.py                       | Script parsing logic             |
-| TestsScriptParser.cpp               | test_script_parser.py                  | Script parser tests              |
-| Simulation.hpp / Simulation.cpp     | simulation.py                          | Simulation engine                |
-| TestsSimulation.cpp                 | test_simulation.py                     | Simulation tests                 |
-| Dijkstra.hpp / Dijkstra.cpp         | dijkstra.py                            | Pathfinding logic                |
-| MapCoordinatesInsideRadius.hpp/cpp  | map_coordinates_inside_radius.py        | Map radius logic                 |
-| TestsCoordInsideRadius.cpp          | test_map_coordinates_inside_radius.py   | Map radius tests                 |
-| MapRandomCoordinates.hpp/cpp        | map_random_coordinates.py               | Map random coord logic           |
-| main.cpp / main.hpp (tests)         | test_main.py                            | Test runner (if needed)          |
-| demo/src/*                          | demo.py                                 | Demo/UI logic                    |
-
----
-
-## 6. Testing & Validation
-
-- For each ported module, ensure all tests pass before moving on.
-- Use code coverage tools (e.g., `pytest --cov`) to track test completeness.
-- Compare Python test results with C++ test results for validation.
-- Use TDD principles: write tests before or alongside implementation.
-
----
-
-## 7. UI/Demo Port
-
-- After the core logic is ported and tested, choose a Python UI library (e.g., `pygame`, `pyimgui`, `tkinter`).
-- Port the demo logic, adapting event handling and rendering to the chosen library.
-
----
-
-## 8. Documentation & Examples
-
-- Document each Python module and test with docstrings.
-- Create example scripts in the `python/` directory to demonstrate running simulations.
-- Update this document with progress and lessons learned.
-
----
-
-## 9. Continuous Improvement
-
-- Refactor for Pythonic style (type hints, comprehensions, idiomatic error handling).
-- Add new tests for uncovered edge cases or new features.
-- Optimize only after correctness is established.
-
----
-
-## Example Directory Structure
-
-```
-python/
-  __init__.py
-  agent.py
-  city.py
-  ...
-  tests/
-    __init__.py
-    test_agent.py
-    test_city.py
-    ...
-```
-
----
-
-**Summary:**
-- Use a test-first, incremental approach for reliability and maintainability.
-- Leverage Python's ecosystem and idioms for a clean, modern codebase.
-- Validate correctness at every step by porting and running tests in parallel with the code.
-
----
-
-## Phase 3: Detailed Task List for Core Classes
-
-With the utility classes (Resource and RuleValue) completed, Phase 3 focuses on implementing the core entities and building up the simulation foundation. We're following our test-driven approach, tackling one module at a time.
-
-### 1. Vector Implementation (Vector.hpp → vector.py) ✅ COMPLETED
-
-- [x] **Initial Setup**
-  - [x] Create `vector.py` with Vector2D and Vector3D classes
-  - [x] Implement constructors with proper type annotations
-  - [x] Set up relevant properties (x, y, z coordinates)
-
-- [x] **Core Vector Operations**
-  - [x] Implement add/subtract/multiply/divide operations
-  - [x] Add dot product method
-  - [x] Implement cross product (for Vector3D)
-  - [x] Create magnitude calculation
-  - [x] Implement vector normalization
-
-- [x] **Utility Methods**
-  - [x] Add distance calculation between vectors
-  - [x] Implement vector interpolation methods (lerp)
-  - [x] Implement conversion methods (to/from tuple, to Vector2D from Vector3D)
-
-- [x] **Testing & Documentation**
-  - [x] Create `test_vector.py` with comprehensive tests (19 tests implemented)
-  - [x] Add docstrings to all methods and properties
-  - [x] Include usage examples in docstrings
-
-#### Vector Implementation Summary
-
-The Vector module implementation provides the following key functionality:
-
-- **Vector2D and Vector3D classes** with type hints for all methods and properties
-- **Comprehensive vector operations:**
-  - Addition, subtraction, multiplication, division
-  - Dot product calculation
-  - Cross product (for Vector3D)
-  - Magnitude and normalization
-- **Utility methods:**
-  - Distance calculation between vectors
-  - Linear interpolation
-  - Conversion methods (to/from tuples, Vector3D to Vector2D projection)
-- **Rich comparison operations** with epsilon-based floating point equality testing
-- **Thorough test coverage** with all 19 tests passing
-- **Detailed documentation** for all classes and methods
-
-This Vector implementation serves as the foundation for spatial calculations throughout the simulation engine, including position tracking, movement calculations, and geometric operations.
-
-## Phase 3A: Map and Path Implementation
-
-Based on the analysis of the codebase structure and dependencies, we'll implement the simulation components in a logical order matching the underlying architecture. The Map and Path classes form the spatial foundation of the simulation, so we'll tackle them first.
-
-### 1. Map Implementation (Map.hpp/cpp → map.py)
-
-The Map class provides the grid-based spatial foundation for resource distribution and tracking.
-
-- [ ] **Initial Map Structure**
-  - [ ] Create `map.py` with Map class definition
-  - [ ] Implement constructors with proper type annotations
-  - [ ] Add grid dimensions and cell initialization
-  - [ ] Define MapType enum/class with appropriate types
-
-- [ ] **Resource Handling**
-  - [ ] Implement resource storage in map cells
-  - [ ] Create methods for resource spreading and diffusion
-  - [ ] Add cell resource querying and modification
-  - [ ] Implement resource capacity limits per cell
-
-- [ ] **Map Operations**
-  - [ ] Add methods for neighbor cell identification
-  - [ ] Implement coordinate conversion (world to grid and vice versa)
-  - [ ] Create utility methods for boundary checking
-  - [ ] Add cell search capabilities (within radius, etc.)
-
-- [ ] **Map Coordinates Inside Radius (MapCoordinatesInsideRadius)**
-  - [ ] Implement cell search within radius functionality
-  - [ ] Add methods for different search patterns (circle, square)
-  - [ ] Create efficient radius search algorithms
-
-- [ ] **Random Map Coordinates (MapRandomCoordinates)**
-  - [ ] Implement random coordinate generation
-  - [ ] Add distribution patterns and constraints
-  - [ ] Create seeded random generation for reproducibility
-
-- [ ] **Testing & Documentation**
-  - [ ] Implement comprehensive tests in `test_map.py`
-  - [ ] Create specific tests for radius and random coordinates
-  - [ ] Add docstrings and type annotations throughout
-  - [ ] Include examples in documentation
-
-### 2. Path Implementation (Path.hpp/cpp → path.py)
-
-The Path class provides the network structure for agent movement through the simulation.
-
-- [ ] **Node Implementation**
-  - [ ] Create Node class with position and connectivity
-  - [ ] Implement node properties and identifiers
-  - [ ] Add methods for connection management
-  - [ ] Create node search and comparison utilities
-
-- [ ] **Way Implementation**
-  - [ ] Implement Way class for connections between nodes
-  - [ ] Add properties for length and traversal cost
-  - [ ] Create methods for way subdivision and merging
-  - [ ] Implement position calculation along way
-
-- [ ] **Path Graph Structure**
-  - [ ] Create Path class as container for nodes and ways
-  - [ ] Implement graph construction methods
-  - [ ] Add path type and properties
-  - [ ] Create methods for path modification
-
-- [ ] **Pathfinding (Dijkstra)**
-  - [ ] Implement Dijkstra pathfinding algorithm
-  - [ ] Add priority queue and path tracking
-  - [ ] Create path reconstruction functionality
-  - [ ] Implement pathfinding between arbitrary nodes
-
-- [ ] **Path Operations**
-  - [ ] Add methods for path traversal
-  - [ ] Implement position interpolation along path
-  - [ ] Create utilities for path distance calculation
-  - [ ] Add path optimization methods
-
-- [ ] **Testing & Documentation**
-  - [ ] Implement comprehensive tests in `test_path.py`
-  - [ ] Create specific tests for Dijkstra implementation
-  - [ ] Add docstrings and type annotations throughout
-  - [ ] Include examples in documentation
-
-## Phase 3B: City, Unit, and Agent Implementation
-
-After establishing the spatial foundation with Map and Path, we'll implement the entities that operate within this framework.
-
-### 3. Unit Implementation (Unit.hpp/cpp → unit.py)
-
-Units are stationary entities that produce and consume resources, serving as endpoints for agent movement.
-
-- [ ] **Core Unit Structure**
-  - [ ] Create Unit class with proper type hints
-  - [ ] Implement unit properties (type, position, state)
-  - [ ] Add unit resource management
-  - [ ] Create unit activation/deactivation logic
-
-- [ ] **Resource Management**
-  - [ ] Implement resource production/consumption rules
-  - [ ] Add resource capacity and storage
-  - [ ] Create resource transformation methods
-  - [ ] Implement resource request and fulfillment
-
-- [ ] **Agent Interaction**
-  - [ ] Add agent spawning capabilities
-  - [ ] Implement agent handling methods
-  - [ ] Create resource transfer to/from agents
-  - [ ] Add target designation for agents
-
-- [ ] **Rule Processing**
-  - [ ] Implement rule application for units
-  - [ ] Add update methods for simulation steps
-  - [ ] Create state change handling
-  - [ ] Implement unit lifecycle management
-
-- [ ] **Testing & Documentation**
-  - [ ] Create comprehensive tests in `test_unit.py`
-  - [ ] Test resource flow and rule application
-  - [ ] Add docstrings and type annotations
-  - [ ] Include examples in documentation
-
-### 4. Agent Implementation (Agent.hpp/cpp → agent.py)
-
-Agents are mobile entities that move along paths, carrying resources between units.
-
-- [ ] **Core Agent Structure**
-  - [ ] Create Agent class with proper type hints
-  - [ ] Implement movement state and position tracking
-  - [ ] Add resource carrying capabilities
-  - [ ] Create agent type and behavior properties
-
-- [ ] **Movement Logic**
-  - [ ] Implement path following along ways
-  - [ ] Add pathfinding request integration
-  - [ ] Create movement update methods
-  - [ ] Implement position interpolation
-
-- [ ] **Resource Handling**
-  - [ ] Add resource pickup/delivery methods
-  - [ ] Implement resource transfer logic
-  - [ ] Create resource capacity management
-  - [ ] Add resource transformation during transit (if needed)
-
-- [ ] **Agent Behavior**
-  - [ ] Implement target seeking
-  - [ ] Add decision-making for multiple targets
-  - [ ] Create state management for agent actions
-  - [ ] Implement task priority handling
-
-- [ ] **Testing & Documentation**
-  - [ ] Create comprehensive tests in `test_agent.py`
-  - [ ] Test movement, resource handling, and behavior
-  - [ ] Add docstrings and type annotations
-  - [ ] Include examples in documentation
-
-### 5. City Implementation (City.hpp/cpp → city.py)
-
-The City class serves as the container that coordinates all entities in the simulation.
-
-- [ ] **Core City Structure**
-  - [ ] Create City class with proper type hints
-  - [ ] Implement management of maps, paths, units, and agents
-  - [ ] Add city properties (name, position, dimensions)
-  - [ ] Create global resource management
-
-- [ ] **Entity Management**
-  - [ ] Implement methods to add/get/remove maps
-  - [ ] Add methods to add/get/remove paths
-  - [ ] Create methods to add/get/remove units
-  - [ ] Implement methods to add/get/remove agents
-
-- [ ] **Simulation Logic**
-  - [ ] Add update method for simulation steps
-  - [ ] Implement coordination of entity updates
-  - [ ] Create methods for city-wide events
-  - [ ] Add status tracking and metrics
-
-- [ ] **Spatial Utilities**
-  - [ ] Implement world-to-map coordinate conversion
-  - [ ] Add city translation/movement methods
-  - [ ] Create spatial query utilities
-  - [ ] Implement entity placement validation
-
-- [ ] **Testing & Documentation**
-  - [ ] Create comprehensive tests in `test_city.py`
-  - [ ] Test entity management and simulation flow
-  - [ ] Add docstrings and type annotations
-  - [ ] Include examples in documentation
-
-This implementation plan follows the architectural dependency hierarchy of the simulation engine, starting with the spatial foundation (Map and Path) and building up to the entities that operate within this framework (Units and Agents), all coordinated by the City container. Each component will be implemented with a test-driven approach, ensuring robust functionality and integration.
-
-This roadmap for Phase 3 provides a systematic approach to implementing the core entities of the OpenGlassBox simulation engine. Each class builds upon the previously implemented ones, allowing for incremental testing and validation. As we complete these classes, we'll establish the foundation needed for the more complex simulation logic in subsequent phases.

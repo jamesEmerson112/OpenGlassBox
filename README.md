@@ -48,9 +48,12 @@ A test-driven Python port of the OpenGlassBox simulation engine is underway in t
 - **Implementation Progress:**
   - **Phase 1-2 (Completed)**: Foundation data classes (Resource, RuleValue, Vector) are implemented.
   - **Phase 3 (In Progress)**: Following a bottom-up approach based on dependency hierarchy:
-    - **Phase 3A (Next)**: Spatial foundation components:
-      - Map implementation with grid functionality and resource tracking
-      - Path implementation with Node/Way graph structure and pathfinding
+    - **Phase 3A (In Progress)**: Spatial foundation components:
+      - ✅ Map implementation with grid functionality and resource tracking
+      - ✅ MapCoordinatesInsideRadius for efficient radius-based coordinate queries
+      - ✅ MapRandomCoordinates for random grid coordinates generation
+      - ✅ Path implementation with Node/Way graph structure
+      - Dijkstra pathfinding algorithm (Next)
     - **Phase 3B**: Entity components:
       - Unit implementation for stationary simulation entities
       - Agent implementation for mobile resource carriers

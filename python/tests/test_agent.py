@@ -7,7 +7,8 @@ This file covers:
 - Verification of member variables, type properties, and correct linkage.
 - Basic movement and position logic for Agent instances.
 
-The tests ensure that the Agent and its dependencies are correctly set up and that their initial state matches expectations from the original C++ simulation engine.
+The tests match the original C++ tests in TestsAgent.cpp, ensuring that Agent objects
+are properly initialized and structured.
 """
 
 import pytest

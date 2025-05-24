@@ -596,3 +596,7 @@ class Vector3D:
             A new 3D vector with the specified components
         """
         return cls(v.x, v.y, z)
+
+
+# Aliases for compatibility with original C++ class names
+Vector3f = Vector3D

@@ -150,4 +150,355 @@ def test_grid_position():
     assert u[0] == 1
     assert v[0] == 1
 
-# TODO: Port and implement the more complex tests (BuildingCity, AddUnitSplitRoad, translate, update, updateRemoveAgent)
+def test_update():
+    """
+    Test the city update simulation step.
+
+    This test verifies that when the city update method is called,
+    it properly processes all entities in the city, executing rules
+    for all units and maps.
+
+    Ported from the update test in TestsCity.cpp.
+    """
+    from python.city import City
+    from python.unit import UnitType
+    from python.vector import Vector3f
+    from python.path import PathType
+
+    # Create a TestListener to track entity events
+    class TestListener(City.Listener):
+        def __init__(self):
+            super().__init__()
+            self.update_maps_called = False
+            self.update_units_called = False
+
+        def on_map_update(self, map_obj):
+            self.update_maps_called = True
+
+        def on_unit_update(self, unit):
+            self.update_units_called = True
+
+    # Create a test city with custom listener
+    city = City("Paris")
+    test_listener = TestListener()
+    city.set_listener(test_listener)
+
+    # Add a map and a unit
+    from python.city import MapType
+    city.add_map(MapType("Land"))
+    path = city.add_path(PathType("Road"))
+    node = path.addNode(Vector3f(0.0, 0.0, 0.0))
+    city.add_unit(UnitType("unit"), node)
+
+    # Execute update
+    city.update()
+
+    # Verify that the update methods were called on all entities
+    assert test_listener.update_maps_called
+    assert test_listener.update_units_called
+
+def test_update_remove_agent():
+    """
+    Test agent removal during city updates.
+
+    This test verifies that agents are properly removed when their update method
+    returns True (indicating task completion), and that the remaining agents are
+    correctly maintained.
+
+    Ported from the updateRemoveAgent test in TestsCity.cpp.
+    """
+    from python.city import City
+    from python.agent import Agent, AgentType
+    from python.unit import UnitType
+    from python.vector import Vector3f
+    from python.path import PathType
+    from python.resources import Resources
+
+    # Create mock agents for testing
+    class TestAgent(Agent):
+        def __init__(self, id, name, remove):
+            self.m_id = id
+            self.m_name = name
+            self.m_remove = remove
+            self.m_position = Vector3f(0, 0, 0)
+            self.m_type = AgentType(name, 1.0, 1.0, 0xFFFFFF)
+
+        def update(self, dijkstra):
+            return self.m_remove
+
+        def id(self):
+            return self.m_id
+
+        def type(self):
+            return self.m_name
+
+        def position(self):
+            return self.m_position
+
+    # Create a test city
+    city = City("Paris")
+
+    # Create some test agents
+    agents = [
+        TestAgent(0, "agent-0", False),
+        TestAgent(1, "agent-1", True),   # This one should be removed
+        TestAgent(2, "agent-2", False),
+        TestAgent(3, "agent-3", True),   # This one should be removed
+        TestAgent(4, "agent-4", False),
+    ]
+
+    # Add them to the city
+    for agent in agents:
+        city.m_agents.append(agent)
+
+    # Set up a test listener to track removals
+    removed_agents = []
+
+    class TestListener(City.Listener):
+        def on_agent_removed(self, agent):
+            removed_agents.append(agent.id())
+
+    city.set_listener(TestListener())
+
+    # Update the city
+    city.update()
+
+    # Verify that agents were correctly removed
+    assert len(city.agents()) == 3
+    assert city.agents()[0].id() == 0
+    assert city.agents()[1].id() == 4  # Agent 4 should be at index 1 now (was swapped with agent 3)
+    assert city.agents()[2].id() == 2
+
+    # Verify that the removed agents were reported to the listener
+    assert 1 in removed_agents
+    assert 3 in removed_agents
+
+def test_translate():
+    """
+    Test translating a city and all its entities.
+
+    This test verifies that when a city is translated (moved), all of its
+    components (maps, paths, nodes, units, agents) are also translated
+    by the same amount, ensuring that the entire city moves as a cohesive unit.
+
+    Ported from the translate test in TestsCity.cpp.
+    """
+    # Use the actual implementation
+    from python.city import City, MapType, PathType
+    from python.vector import Vector3f
+    from python.path import WayType
+    from python.unit import UnitType
+    from python.agent import AgentType
+    from python.resources import Resources
+
+    city = City("Paris")
+
+    # Add a map, path with nodes and way, unit, and agent
+    m1 = city.add_map(MapType("water"))
+    p1 = city.add_path(PathType("Road"))
+    n1 = p1.addNode(Vector3f(1.0, 2.0, 3.0))
+    n2 = p1.addNode(Vector3f(3.0, 3.0, 3.0))
+    w1 = p1.addWay(WayType("Dirt", 0xAAAAAA), n1, n2)
+    u1 = city.add_unit(UnitType("unit1"), n1)
+    a1 = city.add_agent(AgentType("Worker", 1.0, 2, 0xFFFFFF), u1, Resources(), "target")
+
+    # Translate the City twice
+    city.translate(Vector3f(1.0, 1.0, 1.0))
+    city.translate(Vector3f(0.0, 1.0, -1.0))
+
+    # Check if all elements have been translated
+    # City position should now be (1, 2, 0)
+    assert int(city.position().x) == 1
+    assert int(city.position().y) == 2
+    assert int(city.position().z) == 0
+
+    # Map should be at the same position as the city
+    assert int(m1.position().x) == 1
+    assert int(m1.position().y) == 2
+    assert int(m1.position().z) == 0
+
+    # Node1 should be at (1+1+1, 2+2+2, 3+1-1)
+    assert int(n1.position().x) == 3
+    assert int(n1.position().y) == 6
+    assert int(n1.position().z) == 3
+
+    # Node2 should be at (3+1, 3+2, 3+0)
+    assert int(n2.position().x) == 4
+    assert int(n2.position().y) == 5
+    assert int(n2.position().z) == 3
+
+    # Position of the Way1 should match its nodes
+    assert int(w1.position1().x) == 3  # Node1
+    assert int(w1.position1().y) == 6
+    assert int(w1.position1().z) == 3
+    assert int(w1.position2().x) == 4  # Node2
+    assert int(w1.position2().y) == 5
+    assert int(w1.position2().z) == 3
+
+    # Position of the Agent should match Node1
+    assert int(a1.position().x) == 3
+    assert int(a1.position().y) == 6
+    assert int(a1.position().z) == 3
+
+def test_add_unit_split_road():
+    """
+    Test splitting a way when adding a unit at a specific position.
+
+    This test verifies that when a unit is added along a way at a specific offset,
+    the way is properly split into two ways with a new node created at the unit's position.
+
+    Ported from the AddUnitSplitRoad test in TestsCity.cpp.
+    """
+    # Use the actual implementation
+    from python.city import City, PathType
+    from python.vector import Vector3f
+    from python.path import Path, WayType
+    from python.unit import UnitType
+
+    city = City("Paris")
+    p1 = city.add_path(PathType("Road"))
+    n1 = p1.addNode(Vector3f(0.0, 0.0, 3.0))
+    n2 = p1.addNode(Vector3f(2.0, 0.0, 3.0))
+    w1 = p1.addWay(WayType("Dirt", 0xAAAAAA), n1, n2)
+
+    # Check number of nodes and ways before splitting
+    assert len(p1.nodes()) == 2
+    assert len(p1.ways()) == 1
+
+    # Add Unit splitting the way into two ways and adding a new node
+    u1 = city.add_unit_on_way(UnitType("unit"), p1, w1, 0.5)
+
+    # Check number of nodes and ways after splitting
+    assert len(p1.nodes()) == 3
+    assert len(p1.ways()) == 2
+
+    # Verify the newly added Node
+    new_node = p1.nodes()[2]
+    assert new_node.id() == 2
+    assert int(new_node.position().x) == 1
+    assert int(new_node.position().y) == 0
+    assert int(new_node.position().z) == 3
+
+    # Verify the ways after splitting
+    way1 = p1.ways()[0]
+    way2 = p1.ways()[1]
+
+    # First way: from original node0 to new node
+    assert way1.id() == 0
+    assert int(way1.position1().x) == 0  # Node0
+    assert int(way1.position1().y) == 0
+    assert int(way1.position1().z) == 3
+    assert int(way1.position2().x) == 1  # New Node
+    assert int(way1.position2().y) == 0
+    assert int(way1.position2().z) == 3
+
+    # Second way: from new node to original node1
+    assert way2.id() == 1
+    assert int(way2.position1().x) == 1  # New Node
+    assert int(way2.position1().y) == 0
+    assert int(way2.position1().z) == 3
+    assert int(way2.position2().x) == 2  # Node1
+    assert int(way2.position2().y) == 0
+    assert int(way2.position2().z) == 3
+
+def test_building_city():
+    """
+    Test creating maps and paths within a city, verifying their properties.
+
+    This test covers:
+    - Adding maps with different types and properties
+    - Replacing maps with the same name
+    - Adding paths with different properties
+    - Replacing paths with the same name
+
+    Ported from the BuildingCity test in TestsCity.cpp.
+    """
+    # Switch to use the actual implementation instead of stubs
+    from python.city import City, MapType, PathType
+    from python.vector import Vector3f
+    from python.map import Map
+    from python.path import Path, WayType
+    from python.unit import UnitType, Unit
+    from python.agent import AgentType, Agent
+    from python.resources import Resources
+
+    GRILL = 4
+    city = City("Paris", Vector3f(1.0, 2.0, 3.0), GRILL, GRILL)
+
+    # Add Map1
+    m1 = city.add_map(MapType("map1"))
+    m2 = city.get_map("map1")
+
+    # Check initial values of the newly created Map
+    assert m1 is m2  # Should be the same object
+    assert m1.type() == "map1"
+    assert m1.position().x == city.position().x
+    assert m1.position().y == city.position().y
+    assert m1.position().z == city.position().z
+    assert m1.get_capacity() == 2147483647  # Resource.MAX_CAPACITY
+    assert m1.color() == 0xFFFFFF
+
+    # Add Map2 with custom capacity and color
+    m3 = city.add_map(MapType("map2", 0x00, 10))
+    m4 = city.get_map("map2")
+
+    # Check initial values of the newly created Map
+    assert m3 is m4  # Should be the same object
+    assert m4.type() == "map2"
+    assert m4.position().x == city.position().x
+    assert m4.position().y == city.position().y
+    assert m4.position().z == city.position().z
+    assert m4.get_capacity() == 10
+    assert m4.color() == 0x00
+
+    # Add again Map2. Check previous map has been replaced
+    m5 = city.add_map(MapType("map2"))
+    m6 = city.get_map("map2")
+    assert m1 is m2  # First map still the same
+    assert m5 is m6  # New map is properly registered
+    assert m6 is not m4  # Different from previous map2
+    # No longer capacity 10 and no longer black color
+    assert m6.get_capacity() == 2147483647  # Resource.MAX_CAPACITY
+    assert m6.color() == 0xFFFFFF
+
+    # Add a Path
+    p1 = city.add_path(PathType("path1"))
+    p2 = city.get_path("path1")
+    assert p1 is p2  # Should be the same object
+
+    # Check initial values of the newly created Path
+    assert p2.type() == "path1"
+    assert p2.color() == 0xFFFFFF
+    assert len(p2.nodes()) == 0
+    assert len(p2.ways()) == 0
+
+    # Replace the Path
+    p3 = city.add_path(PathType("path1", 0xAA))
+    p4 = city.get_path("path1")
+
+    # Check previous path has been replaced
+    assert p3 is p4  # Should be the same object
+    assert p3 is not p1  # Different from previous path
+    assert p4 is not p2  # Different from previous path
+    assert p4.type() == "path1"
+    assert p4.color() == 0xAA
+
+    # Add units
+    unit_type = UnitType("unit1", 0xFF00FF, 2)
+    # Create a node for the unit
+    node = p3.addNode(Vector3f(1.0, 2.0, 3.0))
+    u1 = city.add_unit(unit_type, node)
+    assert len(city.units()) == 1
+    u2 = city.units()[0]
+    assert u1 is u2  # Should be the same object
+    assert u2.color() == 0xFF00FF
+
+    # Add agent
+    agent_type = AgentType("Worker", 1.0, 2, 0xFFFFFF)
+    a1 = city.add_agent(agent_type, u2, Resources(), "???")
+    a2 = city.agents()[0]
+    assert a1 is a2  # Should be the same object
+    assert a1.type() == "Worker"
+    assert a1.m_type.speed == agent_type.speed
+    assert a1.m_type.color == agent_type.color
+    assert a1.m_type.radius == agent_type.radius
