@@ -227,6 +227,15 @@ class Resources:
                 return False
         return True
 
+    def is_empty(self) -> bool:
+        """
+        Alias for isEmpty() method for Python naming convention compatibility.
+
+        Returns:
+            True if all resources have zero amount, False otherwise
+        """
+        return self.isEmpty()
+
     def hasResource(self, resource_type: str) -> bool:
         """
         Return true if the resource of the given type is present in the

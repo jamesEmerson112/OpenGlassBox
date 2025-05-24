@@ -8,8 +8,8 @@ flow through the simulation. Each rule has a set of conditions and commands.
 from typing import Dict, List, Optional, Any, Callable
 from dataclasses import dataclass, field
 
-from rule_command import RuleCommand
-from rule_value import IRuleValue as RuleValue
+from .rule_command import RuleCommand
+from .rule_value import IRuleValue as RuleValue
 
 
 class Rule:

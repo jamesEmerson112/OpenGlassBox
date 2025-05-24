@@ -14,10 +14,10 @@ from unittest.mock import Mock, patch, MagicMock
 # Add the parent directory to the path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from demo import GlassBoxDemo as BasicDemo
+from demo.src.demo import GlassBoxDemo as BasicDemo
 from demo_enhanced import GlassBoxDemo as EnhancedDemo
-from simulation import Simulation
-from vector import Vector3f
+from src.simulation import Simulation
+from src.vector import Vector3f
 
 
 class TestBasicDemoIntegration(unittest.TestCase):

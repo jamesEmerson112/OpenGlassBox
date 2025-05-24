@@ -17,15 +17,15 @@ from typing import Dict, List, Optional, Any, Tuple, TextIO
 from dataclasses import dataclass, field
 from enum import Enum
 
-from resource import Resource
-from resources import Resources
-from agent import AgentType
-from rule import RuleMap, RuleUnit, RuleMapType, RuleUnitType
-from rule_command import (
+from .resource import Resource
+from .resources import Resources
+from .agent import AgentType
+from .rule import RuleMap, RuleUnit, RuleMapType, RuleUnitType
+from .rule_command import (
     IRuleCommand, RuleCommandAdd, RuleCommandRemove,
     RuleCommandTest, RuleCommandAgent, Comparison
 )
-from rule_value import (
+from .rule_value import (
     IRuleValue, RuleValueLocal, RuleValueGlobal,
     RuleValueMap
 )

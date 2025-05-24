@@ -10,8 +10,8 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple, Any
 import copy
 
-from vector import Vector3f
-from resources import Resources
+from .vector import Vector3f
+from .resources import Resources
 
 
 @dataclass
@@ -134,7 +134,7 @@ class City:
         self.m_agents = []  # List[Agent]
 
         # Initialize Dijkstra pathfinding
-        from dijkstra import Dijkstra
+        from .dijkstra import Dijkstra
         self.m_dijkstra = Dijkstra()
 
         # Create default listener
@@ -249,7 +249,7 @@ class City:
             The newly created Map
         """
         # Import here to avoid circular imports
-        from map import Map
+        from .map import Map
 
         new_map = Map(map_type, self)
         self.m_maps[map_type.name] = new_map
@@ -282,7 +282,7 @@ class City:
             The newly created Path
         """
         # Import here to avoid circular imports
-        from path import Path
+        from .path import Path
 
         new_path = Path(path_type)
         self.m_paths[path_type.name] = new_path
@@ -316,7 +316,7 @@ class City:
             The newly created Unit
         """
         # Import here to avoid circular imports
-        from unit import Unit
+        from .unit import Unit
 
         new_unit = Unit(unit_type, node, self)
         self.m_units.append(new_unit)
@@ -353,7 +353,7 @@ class City:
             The newly created Agent
         """
         # Import here to avoid circular imports
-        from agent import Agent
+        from .agent import Agent
 
         new_agent = Agent(self.m_nextAgentId, agent_type, owner, resources, search_target)
         self.m_nextAgentId += 1

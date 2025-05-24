@@ -17,11 +17,11 @@ import sys
 # Add the parent directory to the path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from simulation import Simulation
-from vector import Vector3f
-from map import MapType
-from path import PathType, WayType
-from unit import UnitType
+from src.simulation import Simulation
+from src.vector import Vector3f
+from src.map import MapType
+from src.path import PathType, WayType
+from src.unit import UnitType
 import pygame
 
 

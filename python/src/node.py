@@ -10,7 +10,7 @@ from typing import List, Dict, Optional, Any, Tuple
 from dataclasses import dataclass
 import math
 
-from vector import Vector3f
+from .vector import Vector3f
 
 
 @dataclass

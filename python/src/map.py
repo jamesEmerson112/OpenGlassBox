@@ -9,10 +9,10 @@ adding, removing, and querying resources within regions.
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Tuple, Any
 
-from vector import Vector3f
-from map_coordinates_inside_radius import MapCoordinatesInsideRadius
-from map_random_coordinates import MapRandomCoordinates
-from resource import Resource
+from .vector import Vector3f
+from .map_coordinates_inside_radius import MapCoordinatesInsideRadius
+from .map_random_coordinates import MapRandomCoordinates
+from .resource import Resource
 
 
 @dataclass

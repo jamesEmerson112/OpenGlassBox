@@ -9,10 +9,10 @@ from unittest.mock import Mock, patch, MagicMock
 import pygame
 from typing import List, Dict
 
-from .debug_ui import DebugUI
-from .simulation import Simulation
-from .city import City
-from .vector import Vector3f
+import debug_ui DebugUI
+from simulation import Simulation
+from city import City
+from vector import Vector3f
 
 
 class TestDebugUI(unittest.TestCase):

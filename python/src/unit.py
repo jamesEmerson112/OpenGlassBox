@@ -9,8 +9,8 @@ the Path network, store resources, and execute rules that can create Agents.
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Any
 
-from vector import Vector3f
-from resources import Resources
+from .vector import Vector3f
+from .resources import Resources
 
 
 @dataclass
