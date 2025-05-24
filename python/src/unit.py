@@ -65,21 +65,20 @@ class Unit:
         # Register the unit with the node
         self.m_node.addUnit(self)
 
-        # Initialize the rule context
-        self.m_context = RuleContext(
-            unit=self,
-            city=city,
-            locals=self.m_resources,
-            globals=city.globals(),
-            radius=unit_type.radius
-        )
-
-        # Calculate grid position
+        # Initialize the rule context as dictionary (for rule execution)
         u_out = []
         v_out = []
         city.world2mapPosition(self.m_node.position(), u_out, v_out)
-        self.m_context.u = u_out[0]
-        self.m_context.v = v_out[0]
+
+        self.m_context = {
+            'unit': self,
+            'city': city,
+            'locals': self.m_resources,
+            'globals': city.globals(),
+            'radius': unit_type.radius,
+            'u': u_out[0] if u_out else 0,
+            'v': v_out[0] if v_out else 0
+        }
 
         # Initialize tick counter
         self.m_ticks = 0

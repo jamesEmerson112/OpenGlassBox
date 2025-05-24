@@ -16,10 +16,7 @@ from dataclasses import dataclass, field
 import sys
 import os
 
-# Add the root python directory to the path if not already there
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-
-# Import from the src package
+# Import from the src package - path should already be set up by main.py
 from src.simulation import Simulation
 from src.city import City
 from src.map import Map
@@ -492,7 +489,8 @@ class GlassBoxDemo:
 
         # Draw simulation status
         status = "PAUSED" if self.paused else "RUNNING"
-        text = self.font.render(f"Status: {status}", True, WHITE)
+        fps = int(self.clock.get_fps())
+        text = self.font.render(f"Status: {status} FPS: {fps}", True, WHITE)
         surface.blit(text, (self.width - 200, 10))
 
         # Draw debug panel if enabled
@@ -527,13 +525,13 @@ class GlassBoxDemo:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
-                elif event.key == pygame.K_SPACE:
+                elif event.key == pygame.K_p:
                     self.paused = not self.paused
                 elif event.key == pygame.K_d:
                     self.show_debug = not self.show_debug
                 elif event.key == pygame.K_m:
                     self.show_maps = not self.show_maps
-                elif event.key == pygame.K_p:
+                elif event.key == pygame.K_l:
                     self.show_paths = not self.show_paths
                 elif event.key == pygame.K_u:
                     self.show_units = not self.show_units
@@ -582,16 +580,27 @@ class GlassBoxDemo:
         # Clear screen with dark blue background like C++ demo
         self.screen.fill((50, 50, 100))
 
-        # Draw grid for reference
-        grid_size = 50
-        for x in range(0, self.width, grid_size):
-            pygame.draw.line(self.screen, (70, 70, 120), (x, 0), (x, self.height), 1)
-        for y in range(0, self.height, grid_size):
-            pygame.draw.line(self.screen, (70, 70, 120), (0, y), (self.width, y), 1)
+        # If paused, show instructions like C++ demo
+        if self.paused:
+            # Draw instructions
+            big_font = pygame.font.SysFont("Arial", 24)
+            text1 = big_font.render("- PRESS P TO PLAY!", True, WHITE)
+            text2 = big_font.render("- PRESS D TO SHOW DEBUG DURING THE PLAY!", True, WHITE)
 
-        # Draw all cities
-        for city_name, city in self.simulation.cities().items():
-            self.draw_city(city, self.screen)
+            # Center the text
+            self.screen.blit(text1, (50, 150))
+            self.screen.blit(text2, (50, 200))
+        else:
+            # Draw grid for reference
+            grid_size = 50
+            for x in range(0, self.width, grid_size):
+                pygame.draw.line(self.screen, (70, 70, 120), (x, 0), (x, self.height), 1)
+            for y in range(0, self.height, grid_size):
+                pygame.draw.line(self.screen, (70, 70, 120), (0, y), (self.width, y), 1)
+
+            # Draw all cities
+            for city_name, city in self.simulation.cities().items():
+                self.draw_city(city, self.screen)
 
         # Draw UI on top
         self.draw_ui(self.screen)
@@ -599,8 +608,127 @@ class GlassBoxDemo:
         # Flip display
         pygame.display.flip()
 
+    def init_demo_cities(self):
+        """Initialize demo cities directly (like C++ demo) without script parsing."""
+        print("Creating demo cities directly...")
+
+        # Import types we need
+        from src.map import MapType
+        from src.path import PathType, WayType
+        from src.unit import UnitType
+        from src.agent import AgentType
+        from src.rule import Rule
+        from src.rule_command import RuleCommandAgent
+        from src.resources import Resources
+
+        # Create agent types (for dynamic spawning)
+        people_agent_type = AgentType("People", 50.0, 1.0, 0xFFFF00)  # Yellow people
+        worker_agent_type = AgentType("Worker", 30.0, 1.0, 0x00FFFF)  # Cyan workers
+
+        # Create resources for agents to carry
+        food_resources = Resources()
+        food_resources.addResource("food", 5)
+
+        goods_resources = Resources()
+        goods_resources.addResource("goods", 3)
+
+        # Create rules with agent spawning commands
+        people_spawner_rule = Rule("PeopleSpawner", 50, [
+            RuleCommandAgent(people_agent_type, "Work", food_resources)
+        ])
+
+        worker_spawner_rule = Rule("WorkerSpawner", 30, [
+            RuleCommandAgent(worker_agent_type, "Home", goods_resources)
+        ])
+
+        # Create basic types (matching C++ demo) with rules
+        grass_type = MapType("Grass", 0x00FF00, 100)
+        water_type = MapType("Water", 0x0000FF, 100)
+        road_type = PathType("Road", 0x888888)
+        dirt_type = WayType("Dirt", 0x8B4513)
+
+        # Create unit types with rules for agent spawning
+        home_type = UnitType("Home", 0xFF0000, 1, Resources(), [people_spawner_rule], ["People"])
+        work_type = UnitType("Work", 0x0000FF, 1, Resources(), [worker_spawner_rule], ["Worker"])
+
+        # Create Paris city (matches C++ demo exactly)
+        print("Creating Paris...")
+        paris = self.simulation.add_city("Paris", Vector3f(400.0, 200.0, 0.0))
+
+        # Add maps to Paris
+        print("Adding maps to Paris...")
+        paris_grass = paris.add_map(grass_type)
+        paris_water = paris.add_map(water_type)
+
+        # Add some resources to maps
+        for u in range(0, 12, 2):
+            for v in range(0, 12, 2):
+                paris_grass.set_resource(u, v, 8)
+
+        for u in range(1, 12, 3):
+            for v in range(1, 12, 3):
+                paris_water.set_resource(u, v, 50)
+
+        # Add road and nodes to Paris
+        print("Adding paths to Paris...")
+        road = paris.add_path(road_type)
+        n1 = road.addNode(Vector3f(60.0, 60.0, 0.0) + paris.position())
+        n2 = road.addNode(Vector3f(300.0, 300.0, 0.0) + paris.position())
+        n3 = road.addNode(Vector3f(60.0, 300.0, 0.0) + paris.position())
+
+        # Add ways between nodes
+        w1 = road.addWay(dirt_type, n1, n2)
+        w2 = road.addWay(dirt_type, n2, n3)
+        w3 = road.addWay(dirt_type, n3, n1)
+
+        # Add units to Paris
+        print("Adding units to Paris...")
+        u1 = paris.add_unit_on_way(home_type, road, w1, 0.66)
+        u2 = paris.add_unit_on_way(home_type, road, w1, 0.5)
+        u3 = paris.add_unit_on_way(work_type, road, w2, 0.5)
+        u4 = paris.add_unit_on_way(work_type, road, w3, 0.5)
+
+        # Create Versailles city (matches C++ demo exactly)
+        print("Creating Versailles...")
+        versailles = self.simulation.add_city("Versailles", Vector3f(0.0, 30.0, 0.0))
+
+        # Add maps to Versailles
+        print("Adding maps to Versailles...")
+        vers_grass = versailles.add_map(grass_type)
+        vers_water = versailles.add_map(water_type)
+
+        # Add some resources to maps
+        for u in range(0, 12, 3):
+            for v in range(0, 12, 3):
+                vers_grass.set_resource(u, v, 6)
+
+        for u in range(2, 12, 4):
+            for v in range(2, 12, 4):
+                vers_water.set_resource(u, v, 40)
+
+        # Add road and nodes to Versailles
+        print("Adding paths to Versailles...")
+        road2 = versailles.add_path(road_type)
+        n4 = road2.addNode(Vector3f(40.0, 20.0, 0.0) + versailles.position())
+        n5 = road2.addNode(Vector3f(300.0, 300.0, 0.0) + versailles.position())
+
+        # Add ways
+        w4 = road2.addWay(dirt_type, n4, n5)
+        w5 = road2.addWay(dirt_type, n5, n1)  # Connect to Paris
+
+        # Add units to Versailles
+        print("Adding units to Versailles...")
+        u5 = versailles.add_unit_on_way(home_type, road, w5, 0.1)
+        u6 = versailles.add_unit_on_way(work_type, road2, w4, 0.9)
+
+        print("Demo cities initialized successfully!")
+        return True
+
     def run(self):
         """Run the main demo loop."""
+        # Initialize the demo cities directly
+        self.init_demo_cities()
+
         last_time = time.time()
 
         while self.running:

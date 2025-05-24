@@ -1,240 +1,277 @@
 """
-Defines the RuleCommand classes for OpenGlassBox simulation engine.
+RuleCommand module for OpenGlassBox simulation engine.
 
-Rule commands represent specific actions that a rule can take, such as
-transferring resources, spawning agents, or manipulating units.
+This module implements concrete rule command classes that inherit from IRuleCommand.
+These commands represent specific actions that rules can take, such as adding/removing
+resources, testing conditions, and spawning agents.
 """
 
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Union
 from enum import Enum, auto
-from abc import ABC, abstractmethod
+from .rule import IRuleCommand, IRuleValue, RuleContext
 
 
 class Comparison(Enum):
-    """Comparison types for rule test commands."""
+    """
+    Comparison types for rule test commands.
+    Equivalent to C++ RuleCommandTest::Comparison enum.
+    """
     EQUALS = auto()
     GREATER = auto()
     LESS = auto()
 
 
-class IRuleCommand(ABC):
-    """
-    Abstract base class for rule commands.
-
-    Commands represent specific operations that rules can perform within
-    the simulation, such as resource transfers, agent spawning, and more.
-    """
-
-    @abstractmethod
-    def execute(self, context: Dict[str, Any]) -> bool:
-        """
-        Execute the command in the given context.
-
-        Args:
-            context: The execution context (simulation, city, unit, etc.)
-
-        Returns:
-            True if execution succeeded, False otherwise
-        """
-        pass
-
-
-class RuleCommand(IRuleCommand):
-    """
-    Basic rule command implementation.
-
-    Commands represent specific operations that rules can perform within
-    the simulation, such as resource transfers, agent spawning, and more.
-    """
-
-    def __init__(self, command_type: str):
-        """
-        Initialize a rule command with the specified type.
-
-        Args:
-            command_type: The type of command (e.g., "Transfer", "Spawn", etc.)
-        """
-        self.command_type = command_type
-        self.params: Dict[str, Any] = {}
-
-    def add_param(self, name: str, value: Any) -> None:
-        """
-        Add a parameter to the command.
-
-        Args:
-            name: Parameter name
-            value: Parameter value
-        """
-        self.params[name] = value
-
-    def get_param(self, name: str) -> Optional[Any]:
-        """
-        Get a parameter by name.
-
-        Args:
-            name: The parameter name to retrieve
-
-        Returns:
-            The parameter value, or None if not found
-        """
-        return self.params.get(name)
-
-    def has_param(self, name: str) -> bool:
-        """
-        Check if the command has a specific parameter.
-
-        Args:
-            name: The parameter name to check
-
-        Returns:
-            True if the parameter exists, False otherwise
-        """
-        return name in self.params
-
-    def type(self) -> str:
-        """
-        Get the command type.
-
-        Returns:
-            The command type string
-        """
-        return self.command_type
-
-    def execute(self, context: Dict[str, Any]) -> bool:
-        """
-        Execute the command in the given context.
-
-        Args:
-            context: The execution context (simulation, city, unit, etc.)
-
-        Returns:
-            True if execution succeeded, False otherwise
-        """
-        # This is a base implementation; derived classes should override
-        # with specific execution logic
-        return True
-
-
 class RuleCommandAdd(IRuleCommand):
-    """Command to add resources to a target."""
+    """
+    Command to add resources to a target.
+    Equivalent to C++ RuleCommandAdd class.
 
-    def __init__(self, target, amount: int):
+    Example: "map Grass add 1"
+    """
+
+    def __init__(self, target: IRuleValue, amount: int):
         """
         Initialize an add command.
 
         Args:
-            target: The target to add resources to
+            target: The target value to add resources to
             amount: The amount to add
         """
-        self.target = target
-        self.amount = amount
+        self.m_target = target
+        self.m_amount = amount
 
-    def execute(self, context: Dict[str, Any]) -> bool:
+    def validate(self, context: RuleContext) -> bool:
         """
-        Execute the add command.
+        Can be applied if the amount of resource has not reached the capacity.
 
         Args:
-            context: The execution context
+            context: The rule execution context
 
         Returns:
-            True if execution succeeded, False otherwise
+            True if the command can be executed, False otherwise
         """
-        self.target.add(context, self.amount)
-        return True
+        return self.m_target.get(context) < self.m_target.capacity(context)
+
+    def execute(self, context: RuleContext) -> None:
+        """
+        Increase the amount of resource of the target.
+
+        Args:
+            context: The rule execution context
+        """
+        self.m_target.add(context, self.m_amount)
+
+    def type(self) -> str:
+        """
+        Get the command type string for debugging.
+
+        Returns:
+            Formatted string describing the command
+        """
+        return f"Add {self.m_amount} Resources {self.m_target.type()}"
 
 
 class RuleCommandRemove(IRuleCommand):
-    """Command to remove resources from a target."""
+    """
+    Command to remove resources from a target.
+    Equivalent to C++ RuleCommandRemove class.
 
-    def __init__(self, target, amount: int):
+    Example: "local People remove 1"
+    """
+
+    def __init__(self, target: IRuleValue, amount: int):
         """
         Initialize a remove command.
 
         Args:
-            target: The target to remove resources from
+            target: The target value to remove resources from
             amount: The amount to remove
         """
-        self.target = target
-        self.amount = amount
+        self.m_target = target
+        self.m_amount = amount
 
-    def execute(self, context: Dict[str, Any]) -> bool:
+    def validate(self, context: RuleContext) -> bool:
         """
-        Execute the remove command.
+        Can be applied if the amount of resource is enough.
 
         Args:
-            context: The execution context
+            context: The rule execution context
 
         Returns:
-            True if execution succeeded, False otherwise
+            True if the command can be executed, False otherwise
         """
-        self.target.remove(context, self.amount)
-        return True
+        return self.m_target.get(context) >= self.m_amount
+
+    def execute(self, context: RuleContext) -> None:
+        """
+        Decrease the amount of resource of the target.
+
+        Args:
+            context: The rule execution context
+        """
+        self.m_target.remove(context, self.m_amount)
+
+    def type(self) -> str:
+        """
+        Get the command type string for debugging.
+
+        Returns:
+            Formatted string describing the command
+        """
+        return f"Remove {self.m_amount} Resources {self.m_target.type()}"
 
 
 class RuleCommandTest(IRuleCommand):
-    """Command to test a condition on a target."""
+    """
+    Command to test a condition on a target.
+    Equivalent to C++ RuleCommandTest class.
 
-    def __init__(self, target, comparison: Comparison, value: int):
+    Example: "map Water greater 300"
+    """
+
+    def __init__(self, target: IRuleValue, comparison: Comparison, amount: int):
         """
         Initialize a test command.
 
         Args:
-            target: The target to test
+            target: The target value to test
             comparison: The comparison operation to perform
-            value: The value to compare against
+            amount: The amount to compare against
         """
-        self.target = target
-        self.comparison = comparison
-        self.value = value
+        self.m_target = target
+        self.m_amount = amount
+        self.m_comparison = comparison
 
-    def execute(self, context: Dict[str, Any]) -> bool:
+    def validate(self, context: RuleContext) -> bool:
         """
-        Execute the test command.
+        Can be applied if the comparison condition is met.
 
         Args:
-            context: The execution context
+            context: The rule execution context
 
         Returns:
-            True if the test passes, False otherwise
+            True if the test condition passes, False otherwise
         """
-        target_value = self.target.get(context)
+        target_value = self.m_target.get(context)
 
-        if self.comparison == Comparison.EQUALS:
-            return target_value == self.value
-        elif self.comparison == Comparison.GREATER:
-            return target_value > self.value
-        elif self.comparison == Comparison.LESS:
-            return target_value < self.value
+        if self.m_comparison == Comparison.EQUALS:
+            return target_value == self.m_amount
+        elif self.m_comparison == Comparison.GREATER:
+            return target_value > self.m_amount
+        elif self.m_comparison == Comparison.LESS:
+            return target_value < self.m_amount
+        else:
+            # Should not happen, but handle gracefully
+            assert False, f"Unhandled comparison type in RuleCommandTest::validate: {self.m_comparison}"
+            return False
 
-        return False
+    def execute(self, context: RuleContext) -> None:
+        """
+        Execute the test command (no-op).
+        Test commands only validate conditions; they don't modify state.
+
+        Args:
+            context: The rule execution context
+        """
+        # Do nothing - test commands only validate, they don't execute actions
+        pass
+
+    def type(self) -> str:
+        """
+        Get the command type string for debugging.
+
+        Returns:
+            Formatted string describing the command
+        """
+        comparison_str = ""
+        if self.m_comparison == Comparison.EQUALS:
+            comparison_str = "Test Equal"
+        elif self.m_comparison == Comparison.GREATER:
+            comparison_str = "Test Greater"
+        elif self.m_comparison == Comparison.LESS:
+            comparison_str = "Test Less"
+
+        return f"{comparison_str} {self.m_amount} Resources {self.m_target.type()}"
 
 
 class RuleCommandAgent(IRuleCommand):
-    """Command to spawn or manipulate an agent."""
+    """
+    Command to spawn an agent in the simulation.
+    Equivalent to C++ RuleCommandAgent class.
+    Inherits from both IRuleCommand and AgentType functionality.
 
-    def __init__(self, agent_type, search_target: str, resources):
+    Example: "agent People color 0xFFFF00 speed 10"
+    """
+
+    def __init__(self, agent_type: Any, target: str, resources: Any):
         """
         Initialize an agent command.
 
         Args:
-            agent_type: The type of agent to use
-            search_target: The target for the agent to search for
+            agent_type: The AgentType definition (color, speed, etc.)
+            target: The target the agent should search for
             resources: Resources to give to the agent
         """
+        # Store AgentType properties (equivalent to inheriting from AgentType)
         self.agent_type = agent_type
-        self.search_target = search_target
-        self.resources = resources
+        self.m_target = target
+        self.m_resources = resources
 
-    def execute(self, context: Dict[str, Any]) -> bool:
+    def validate(self, context: RuleContext) -> bool:
         """
-        Execute the agent command.
+        Always returns true - agent commands can always be executed.
 
         Args:
-            context: The execution context
+            context: The rule execution context
 
         Returns:
-            True if execution succeeded, False otherwise
+            Always True
         """
-        # In a real implementation, this would spawn an agent
-        # with the given resources and search target
         return True
+
+    def execute(self, context: RuleContext) -> None:
+        """
+        Add a new agent in the city.
+
+        Args:
+            context: The rule execution context
+        """
+        if context.unit is not None and hasattr(context.unit, 'hasWays') and context.unit.hasWays():
+            # Add agent to the city
+            if context.city is not None and hasattr(context.city, 'addAgent'):
+                context.city.addAgent(self, context.unit, self.m_resources, self.m_target)
+        else:
+            # Debug message equivalent to C++ version
+            import sys
+            if hasattr(sys, 'gettrace') and sys.gettrace() is not None:
+                # Only print debug message in debug mode
+                unit_id = getattr(context.unit, 'id', lambda: 'unknown')()
+                print(f"Ill-formed: Unit {unit_id} is attached to an orphan Path Node "
+                      f"and its Agent will not be able to move towards the City.",
+                      file=sys.stderr)
+
+    def type(self) -> str:
+        """
+        Get the command type string for debugging.
+
+        Returns:
+            The command type string
+        """
+        return "Add Agent"
+
+    # AgentType properties (equivalent to C++ multiple inheritance)
+    def name(self) -> str:
+        """Get the agent type name."""
+        return getattr(self.agent_type, 'name', 'Unknown')
+
+    def color(self) -> int:
+        """Get the agent color."""
+        return getattr(self.agent_type, 'color', 0xFFFFFF)
+
+    def speed(self) -> float:
+        """Get the agent speed."""
+        return getattr(self.agent_type, 'speed', 1.0)
+
+
+# Backwards compatibility aliases
+RuleCommand = IRuleCommand

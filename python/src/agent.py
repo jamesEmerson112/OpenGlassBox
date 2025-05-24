@@ -150,9 +150,9 @@ class Agent:
 
         self.m_nextNode = dijkstra.find_next_point(self.m_lastNode, self.m_searchTarget, self.m_resources)
         if self.m_nextNode is not None:
-            self.m_currentWay = self.m_lastNode.get_way_to_node(self.m_nextNode)
+            self.m_currentWay = self.m_lastNode.getWayToNode(self.m_nextNode)
             if self.m_currentWay is not None:
-                if self.m_lastNode is self.m_currentWay.from_node():
+                if self.m_lastNode is self.m_currentWay.from_():
                     self.m_offset = 0.0
                 else:
                     self.m_offset = 1.0
@@ -168,7 +168,7 @@ class Agent:
             return
 
         # Determine direction of movement
-        if self.m_nextNode is self.m_currentWay.to_node():
+        if self.m_nextNode is self.m_currentWay.to():
             # Moving from origin node to destination node
             direction = 1.0
         else:
@@ -184,11 +184,11 @@ class Agent:
         # Check if we've reached one of the end nodes
         if self.m_offset < 0.0:
             self.m_offset = 0.0
-            self.m_lastNode = self.m_currentWay.from_node()
+            self.m_lastNode = self.m_currentWay.from_()
             self.m_nextNode = None
         elif self.m_offset > 1.0:
             self.m_offset = 1.0
-            self.m_lastNode = self.m_currentWay.to_node()
+            self.m_lastNode = self.m_currentWay.to()
             self.m_nextNode = None
 
         # Update the world position of the Agent along the way

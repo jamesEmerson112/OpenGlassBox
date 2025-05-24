@@ -192,22 +192,209 @@ python demo/src/demo.py
 
 This discovery ensures we follow the same architectural patterns as the original C++ implementation and provides proper extensibility for future demo enhancements.
 
+## 🎯 Demo Comparison & Rule System Analysis
+
+### **Live Demo Testing Results**
+
+Today we achieved a **major milestone**: Successfully ran both C++ and Python demos side-by-side for direct comparison!
+
+#### **Visual Comparison Results**:
+
+**✅ WHAT MATCHES PERFECTLY:**
+- **City Layout**: Both VERSAILLES and PARIS positioned identically
+- **Map Resources**: Green (grass) and blue (water) resource dots in correct patterns
+- **Path Network**: Brown roads connecting cities with numbered white nodes (0,1,2,etc.)
+- **Units**: Red (home) and blue (work) squares positioned along paths correctly
+- **UI Layout**: Status display "Status: RUNNING FPS: XX" in top right corner
+- **Grid Background**: Same grid pattern and dark blue background color
+- **Camera System**: Both support pan/zoom navigation
+- **Control Scheme**: Both use P for pause, D for debug, ESC for exit
+
+**❌ KEY BEHAVIORAL DIFFERENCE IDENTIFIED:**
+
+**C++ Demo Behavior:**
+```
+[Console Output]
+Agent People 0 added
+Agent Worker 3 added
+Agent People 7 added
+Agent Worker 4 added
+[...continuous agent spawning...]
+```
+- **Dynamic Agent Creation**: Continuously spawns numbered agents during simulation
+- **Moving Entities**: Agents move along paths between cities
+- **Pause Screen**: Shows "PRESS P TO PLAY!" when paused
+
+**Python Demo Behavior:**
+```
+[Console Output]
+Creating demo cities directly...
+Creating Paris...
+City added: Paris
+[...city setup only, no dynamic agents...]
+```
+- **Static Display**: Only shows initial setup output
+- **Missing Feature**: No continuous agent spawning system
+- **No Moving Agents**: No numbered agents moving along paths
+
+### **🔍 ROOT CAUSE DISCOVERED: The Rule-Based Simulation System**
+
+After analyzing both C++ and Python source code, we identified the **exact** reason for the behavioral difference:
+
+#### **The OpenGlassBox Architecture**
+
+**1. Units: The Static Buildings**
+- **What they are**: Stationary structures like homes, factories, shops
+- **Where they live**: Attached to Nodes in the Path network
+- **What they do**: Store resources and execute rules periodically
+
+**2. Rules: The Behavior Engine**
+- **What they are**: Periodic commands that execute every N simulation ticks
+- **Where they're attached**: To UnitTypes (so all units of that type share rules)
+- **When they run**: Based on a rate (e.g., every 50 ticks = ~4 times per second)
+
+**3. Agents: The Mobile Workers**
+- **What they are**: Moving entities that carry resources between Units
+- **What they do**: Pathfind between Units, deliver/pick up resources, then disappear
+- **How they move**: Use Dijkstra pathfinding along the Path network
+
+#### **🔄 The Dynamic Cycle That Creates Life**
+
+Here's the magic sequence that makes the simulation come alive:
+
+```
+1. Unit Rule Executes (every N ticks)
+   ↓
+2. RuleCommandAgent fires
+   ↓
+3. New Agent spawns with resources and target
+   ↓
+4. Agent pathfinds to target Unit
+   ↓
+5. Agent delivers/exchanges resources
+   ↓
+6. Agent disappears
+   ↓
+7. Repeat when Rule fires again
+```
+
+#### **🎯 Specific Rule Types That Create Agents**
+
+**RuleCommandAgent** - The Agent Creator:
+```cpp
+class RuleCommandAgent : public IRuleCommand, public AgentType {
+    std::string m_target;      // "Work", "Home", "Shop"
+    Resources m_resources;     // What the agent carries
+
+    virtual void execute(RuleContext& context) override {
+        // This creates a new Agent!
+        context->city->addAgent(/*agent details*/);
+    }
+}
+```
+
+**Example Rule Setup** (what's missing in our Python demo):
+```cpp
+// Home units spawn "People" agents carrying "food" looking for "Work"
+UnitType homeType;
+homeType.rules.push_back(new Rule("WorkerSpawner", 50, {  // Every 50 ticks
+    new RuleCommandAgent(PeopleAgentType, "Work", foodResources)
+}));
+
+// Work units spawn "Worker" agents carrying "goods" looking for "Home"
+UnitType workType;
+workType.rules.push_back(new Rule("ShopperSpawner", 30, {  // Every 30 ticks
+    new RuleCommandAgent(WorkerAgentType, "Home", goodsResources)
+}));
+```
+
+#### **🚀 Why C++ Demo is Dynamic vs Python Demo is Static**
+
+**C++ Demo:**
+- ✅ Units have Rules attached with RuleCommandAgent commands
+- ✅ Every 30-50 ticks, rules fire and create new Agents
+- ✅ Agents spawn, move, deliver resources, disappear
+- ✅ Console shows "Agent People 0 added", "Agent Worker 3 added"
+
+**Python Demo:**
+- ❌ Units created with empty rules: `UnitType("Home", 0xFF0000)`
+- ❌ No RuleCommandAgent commands to spawn agents
+- ❌ Simulation runs but Units never create Agents
+- ❌ Only static world with no dynamic behavior
+
+**Both simulation engines are identical!** The code comparison shows:
+
+```python
+# Python Unit.execute_rules() - IDENTICAL to C++
+def execute_rules(self):
+    self.m_ticks += 1
+    for i in range(len(self.m_type.rules) - 1, -1, -1):
+        rule = self.m_type.rules[i]
+        if self.m_ticks % rule.rate() == 0:
+            rule.execute(self.m_context)  # <-- Would create agents IF rules existed!
+```
+
+```cpp
+// C++ Unit::executeRules() - IDENTICAL to Python
+void Unit::executeRules() {
+    m_ticks += 1u;
+    size_t i = m_type.rules.size();
+    while (i--) {
+        if (m_ticks % m_type.rules[i]->rate() == 0u) {
+            m_type.rules[i]->execute(m_context);  // <-- Creates agents!
+        }
+    }
+}
+```
+
+#### **🛠️ The Fix**
+
+To make our Python demo behave like C++, we need to:
+
+1. **Create Rule objects** with RuleCommandAgent commands
+2. **Attach rules to UnitTypes** before creating Units
+3. **Implement RuleCommandAgent.execute()** to spawn agents
+
+The simulation engine itself works perfectly - it just needs the rules that drive the dynamic behavior!
+
+### **📋 README.md vs Reality Check**
+
+**What README.md Claims:**
+- ✅ "Complete functional parity with the original C++ implementation"
+- ✅ "Agent system for autonomous entities"
+- ✅ "Rule-based scripting with command execution"
+
+**Current Reality (from our investigation):**
+- ✅ **Visual parity**: Perfect match with C++ demo appearance
+- ✅ **Engine structure**: All core components implemented correctly
+- ❌ **Dynamic behavior**: Missing rules that spawn agents
+- ❌ **Agent spawning**: No RuleCommandAgent implementations
+- 🔄 **Status**: Structure complete, behavior needs rule implementation
+
+**Conclusion**: The README represents the **aspirational/architectural goal** rather than current implementation status. We have successfully achieved the **foundation** (simulation engine, visual rendering, data structures) but need to complete the **rules system** for full behavioral parity.
+
+This is like having a perfectly working car engine but no gas - the Python simulation has all the mechanics but none of the "fuel" (rules) that make it come alive.
+
 ## Next Steps
 
 1. ✅ **~~Resolve Import Issues~~** - **COMPLETED!** Systematic automation created and executed
 2. ✅ **~~Fix Demo Applications~~** - **COMPLETED!** Demo now works with proper imports
 3. ✅ **~~Understand Demo Architecture~~** - **COMPLETED!** Established correct entry point usage
-4. **Fix Minor Runtime Issues** - Address small method name inconsistencies
-5. **Component Integration** - Ensure all components work together seamlessly
-6. **Performance Testing** - Add benchmarks and optimize critical paths
-7. **Documentation** - Complete API documentation and usage examples
+4. ✅ **~~Visual Demo Parity~~** - **COMPLETED!** Python demo matches C++ visual layout perfectly
+5. 🔄 **CRITICAL: Fix Agent Spawning System** - **IN PROGRESS** Investigate and implement missing dynamic agent creation
+6. **Complete Simulation Dynamics** - Ensure simulation.update() handles all C++ behaviors
+7. **Rule System Integration** - Connect rule execution to agent spawning and movement
+8. **Performance Testing** - Add benchmarks and optimize critical paths
+9. **Documentation** - Complete API documentation and usage examples
 
 ## Notes
 
-The import structure resolution was a MAJOR breakthrough that eliminates the biggest technical blocker. The systematic automation approach not only fixed all current issues but provides maintainable scripts for future import management.
+The visual demo comparison was a **tremendous success** - the Python implementation perfectly replicates the C++ demo's appearance and layout. This validates that our architectural approach and rendering system are correct.
 
-The architectural discovery about proper demo entry points ensures we follow the same patterns as the C++ implementation, maintaining consistency and professionalism in the codebase structure.
+However, the **behavioral gap** (missing agent spawning) represents the next major challenge. The fact that both demos look identical but behave differently confirms that we've successfully ported the **data structures and visualization** but need to complete the **simulation dynamics**.
 
-Both the test suite cleanup and import resolution establish a rock-solid foundation for the rest of the Python port. The demo application now works successfully with proper architecture, proving that the import changes maintain full compatibility while properly structuring the package.
+This discovery shifts our focus from "making it work" to "making it behave correctly" - a much more advanced and interesting challenge that gets to the heart of the simulation engine's logic.
 
-With 50% of tests passing, proper demo architecture established, and the import system working flawlessly, the project has excellent momentum and clear paths forward for the remaining minor implementation details.
+The user's insight about tool choice impact is particularly valuable - it highlights that identical engine implementations should produce identical results regardless of the rendering framework (C++/OpenGL vs Python/Pygame). The difference we're seeing points to incomplete simulation logic, not rendering differences.
+
+With the visual parity achieved and the dynamic behavior gap clearly identified, we now have a precise target for completing the Python port: **implementing the missing agent spawning and movement systems**.
