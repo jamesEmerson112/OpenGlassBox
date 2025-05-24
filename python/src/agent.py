@@ -9,8 +9,8 @@ simulation.
 from dataclasses import dataclass
 from typing import Optional, List, Dict, Any
 
-from .vector import Vector3f
-from .resources import Resources
+from vector import Vector3f
+from resources import Resources
 
 
 @dataclass

@@ -160,10 +160,10 @@ def test_update():
 
     Ported from the update test in TestsCity.cpp.
     """
-    from python.city import City
-    from python.unit import UnitType
-    from python.vector import Vector3f
-    from python.path import PathType
+    from city import City
+    from unit import UnitType
+    from vector import Vector3f
+    from path import PathType
 
     # Create a TestListener to track entity events
     class TestListener(City.Listener):
@@ -184,7 +184,7 @@ def test_update():
     city.set_listener(test_listener)
 
     # Add a map and a unit
-    from python.city import MapType
+    from city import MapType
     city.add_map(MapType("Land"))
     path = city.add_path(PathType("Road"))
     node = path.addNode(Vector3f(0.0, 0.0, 0.0))
@@ -207,12 +207,12 @@ def test_update_remove_agent():
 
     Ported from the updateRemoveAgent test in TestsCity.cpp.
     """
-    from python.city import City
-    from python.agent import Agent, AgentType
-    from python.unit import UnitType
-    from python.vector import Vector3f
-    from python.path import PathType
-    from python.resources import Resources
+    from city import City
+    from agent import Agent, AgentType
+    from unit import UnitType
+    from vector import Vector3f
+    from path import PathType
+    from resources import Resources
 
     # Create mock agents for testing
     class TestAgent(Agent):
@@ -284,12 +284,12 @@ def test_translate():
     Ported from the translate test in TestsCity.cpp.
     """
     # Use the actual implementation
-    from python.city import City, MapType, PathType
-    from python.vector import Vector3f
-    from python.path import WayType
-    from python.unit import UnitType
-    from python.agent import AgentType
-    from python.resources import Resources
+    from city import City, MapType, PathType
+    from vector import Vector3f
+    from path import WayType
+    from unit import UnitType
+    from agent import AgentType
+    from resources import Resources
 
     city = City("Paris")
 
@@ -350,10 +350,10 @@ def test_add_unit_split_road():
     Ported from the AddUnitSplitRoad test in TestsCity.cpp.
     """
     # Use the actual implementation
-    from python.city import City, PathType
-    from python.vector import Vector3f
-    from python.path import Path, WayType
-    from python.unit import UnitType
+    from city import City, PathType
+    from vector import Vector3f
+    from path import Path, WayType
+    from unit import UnitType
 
     city = City("Paris")
     p1 = city.add_path(PathType("Road"))
@@ -414,13 +414,13 @@ def test_building_city():
     Ported from the BuildingCity test in TestsCity.cpp.
     """
     # Switch to use the actual implementation instead of stubs
-    from python.city import City, MapType, PathType
-    from python.vector import Vector3f
-    from python.map import Map
-    from python.path import Path, WayType
-    from python.unit import UnitType, Unit
-    from python.agent import AgentType, Agent
-    from python.resources import Resources
+    from city import City, MapType, PathType
+    from vector import Vector3f
+    from map import Map
+    from path import Path, WayType
+    from unit import UnitType, Unit
+    from agent import AgentType, Agent
+    from resources import Resources
 
     GRILL = 4
     city = City("Paris", Vector3f(1.0, 2.0, 3.0), GRILL, GRILL)

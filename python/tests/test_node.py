@@ -10,8 +10,8 @@ This file covers:
 """
 
 import pytest
-from ..node import Node
-from ..vector import Vector3D as Vector3f
+from .node import Node
+from .vector import Vector3D as Vector3f
 
 
 class TestNode:

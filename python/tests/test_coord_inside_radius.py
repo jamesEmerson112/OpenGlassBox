@@ -15,7 +15,7 @@ and edge cases of the original C++ simulation engine.
 
 import pytest
 import random
-from python.map_coordinates_inside_radius import MapCoordinatesInsideRadius
+from map_coordinates_inside_radius import MapCoordinatesInsideRadius
 
 # Use a fixed seed for reproducible tests
 random.seed(42)

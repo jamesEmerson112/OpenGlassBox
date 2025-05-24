@@ -10,7 +10,7 @@ from typing import List, Dict, Optional, Any, Union, TypeVar, Tuple
 from dataclasses import dataclass, field
 import math
 
-from .vector import Vector3f
+from vector import Vector3f
 
 
 @dataclass

@@ -1,24 +1,34 @@
+"""
+Test runner for all OpenGlassBox Python tests.
+
+This module runs all tests using pytest's discovery mechanism to ensure
+comprehensive testing of the entire simulation engine.
+"""
+
 import pytest
+import sys
+import os
 
-# Import all test modules to ensure they are discovered and run
-from . import test_resource
-from . import test_agent
-from . import test_city
-from . import test_command
-from . import test_coord_inside_radius
-from . import test_dijkstra
-from . import test_map
-from . import test_node
-from . import test_path
-from . import test_resources
-from . import test_simulation
-from . import test_unit
-from . import test_value
-from . import test_script_parser
-from . import test_vector
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-if __name__ == "__main__":
-    pytest.main([__file__, "test_resource.py", "test_agent.py", "test_city.py", "test_command.py",
-                 "test_coord_inside_radius.py", "test_dijkstra.py", "test_map.py", "test_node.py",
-                 "test_path.py", "test_resources.py", "test_simulation.py", "test_unit.py",
-                 "test_value.py", "test_script_parser.py", "test_vector.py"])
+
+def run_all_tests():
+    """
+    Run all tests using pytest.
+
+    Returns:
+        Exit code (0 for success, non-zero for failure)
+    """
+    # Run pytest discovery on the tests directory
+    return pytest.main([
+        '-v',
+        '--tb=short',
+        os.path.dirname(os.path.abspath(__file__))
+    ])
+
+
+if __name__ == '__main__':
+    # Run all tests when executed directly
+    exit_code = run_all_tests()
+    sys.exit(exit_code)

@@ -14,9 +14,9 @@ simulation and coordinating updates across all cities.
 from typing import Dict, Optional, Dict, Union, Any
 from abc import ABC, abstractmethod
 
-from .city import City
-from .vector import Vector3f
-from .script_parser import Script
+from city import City
+from vector import Vector3f
+from script_parser import Script
 
 # Constants for simulation timing
 MAX_ITERATIONS_PER_UPDATE = 20
@@ -86,7 +86,7 @@ class Simulation(Script):
         """
         self.m_listener = listener
 
-    def update(self, delta_time: float) -> None:
+    def update(self, delta_time: float = 0.005) -> None:
         """
         Update the game simulation.
 

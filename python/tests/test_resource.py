@@ -11,7 +11,7 @@ The tests ensure that Resource objects behave as expected for all basic operatio
 """
 
 import pytest
-from python.resource import Resource
+from resource import Resource
 
 def test_constants():
     assert Resource.MAX_CAPACITY >= 65535

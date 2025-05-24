@@ -9,9 +9,9 @@ navigate between locations when carrying resources.
 from typing import Dict, List, Optional, Set, Any
 import random
 import sys
-from .node import Node
-from .resources import Resources
-from .vector import Vector3D
+from node import Node
+from resources import Resources
+from vector import Vector3D
 
 
 class Dijkstra:

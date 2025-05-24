@@ -13,14 +13,14 @@ import pygame
 from typing import Dict, List, Optional, Tuple, Any, Set
 from dataclasses import dataclass, field
 
-from .simulation import Simulation
-from .city import City
-from .map import Map
-from .path import Path, Node, Way
-from .unit import Unit
-from .agent import Agent
-from .script_parser import Script
-from .vector import Vector3f
+from simulation import Simulation
+from city import City
+from map import Map
+from path import Path, Node, Way
+from unit import Unit
+from agent import Agent
+from script_parser import Script
+from vector import Vector3f
 
 # Define colors
 WHITE = (255, 255, 255)
@@ -39,6 +39,36 @@ def hex_to_rgb(hex_color: int) -> Tuple[int, int, int]:
     g = (hex_color >> 8) & 0xFF
     b = hex_color & 0xFF
     return (r, g, b)
+
+# City listener to track entity changes - defined at module level
+class CityListener(City.Listener):
+    def __init__(self, demo):
+        super().__init__()
+        self.demo = demo
+
+    def on_map_added(self, map_obj):
+        print(f"Map added: {map_obj.type()}")
+
+    def on_map_removed(self, map_obj):
+        print(f"Map removed: {map_obj.type()}")
+
+    def on_path_added(self, path):
+        print(f"Path added: {path.type()}")
+
+    def on_path_removed(self, path):
+        print(f"Path removed: {path.type()}")
+
+    def on_unit_added(self, unit):
+        print(f"Unit added: {unit.type()}")
+
+    def on_unit_removed(self, unit):
+        print(f"Unit removed: {unit.type()}")
+
+    def on_agent_added(self, agent):
+        print(f"Agent added: {agent.type()}")
+
+    def on_agent_removed(self, agent):
+        print(f"Agent removed: {agent.type()}")
 
 class GlassBoxDemo:
     """
@@ -97,36 +127,6 @@ class GlassBoxDemo:
     def setup_listeners(self):
         """Set up event listeners for simulation components."""
 
-        # City listener to track entity changes
-        class CityListener(City.Listener):
-            def __init__(self, demo):
-                super().__init__()
-                self.demo = demo
-
-            def on_map_added(self, map_obj):
-                print(f"Map added: {map_obj.type()}")
-
-            def on_map_removed(self, map_obj):
-                print(f"Map removed: {map_obj.type()}")
-
-            def on_path_added(self, path):
-                print(f"Path added: {path.type()}")
-
-            def on_path_removed(self, path):
-                print(f"Path removed: {path.type()}")
-
-            def on_unit_added(self, unit):
-                print(f"Unit added: {unit.type()}")
-
-            def on_unit_removed(self, unit):
-                print(f"Unit removed: {unit.type()}")
-
-            def on_agent_added(self, agent):
-                print(f"Agent added: {agent.type()}")
-
-            def on_agent_removed(self, agent):
-                print(f"Agent removed: {agent.type()}")
-
         # Simulation listener to track city changes
         class SimulationListener(Simulation.Listener):
             def __init__(self, demo):
@@ -167,9 +167,9 @@ class GlassBoxDemo:
         self.setup_listeners()
 
         # Parse script types to get the definitions
-        from .map import MapType
-        from .path import PathType, WayType
-        from .unit import UnitType
+        from map import MapType
+        from path import PathType, WayType
+        from unit import UnitType
 
         # Get types from script
         road_type = None
@@ -201,7 +201,6 @@ class GlassBoxDemo:
 
         # Create Paris city (matches C++ demo exactly)
         paris = self.simulation.add_city("Paris", Vector3f(400.0, 200.0, 0.0))
-        paris.set_listener(CityListener(self))
 
         # Add maps to Paris
         if grass_type:
@@ -232,15 +231,35 @@ class GlassBoxDemo:
 
                 # Add units to Paris
                 if home_type:
-                    u1 = paris.add_unit(home_type, road, w1, 0.66)
-                    u2 = paris.add_unit(home_type, road, w1, 0.5)
+                    u1 = paris.add_unit_on_way(home_type, road, w1, 0.66)
+                    u2 = paris.add_unit_on_way(home_type, road, w1, 0.5)
                 if work_type:
-                    u3 = paris.add_unit(work_type, road, w2, 0.5)
-                    u4 = paris.add_unit(work_type, road, w3, 0.5)
+                    u3 = paris.add_unit_on_way(work_type, road, w2, 0.5)
+                    u4 = paris.add_unit_on_way(work_type, road, w3, 0.5)
+
+                # Add test agents for animation
+                from agent import AgentType
+                from resources import Resources
+
+                # Create agent types
+                worker_type = AgentType("Worker", 0.5, 1.0, 0xFF0000)  # Red workers
+                shopper_type = AgentType("Shopper", 0.3, 1.0, 0x00FF00)  # Green shoppers
+
+                # Add some test agents
+                resources = Resources()
+                resources.addResource("food", 10)
+
+                # Add agents going from homes to work
+                paris.add_agent(worker_type, u1, resources, "Work")
+                paris.add_agent(worker_type, u2, resources, "Work")
+
+                # Add agents going from work to homes
+                resources2 = Resources()
+                resources2.addResource("goods", 5)
+                paris.add_agent(shopper_type, u3, resources2, "Home")
 
         # Create Versailles city (matches C++ demo exactly)
         versailles = self.simulation.add_city("Versailles", Vector3f(0.0, 30.0, 0.0))
-        versailles.set_listener(CityListener(self))
 
         # Add maps to Versailles
         if grass_type:
@@ -271,8 +290,8 @@ class GlassBoxDemo:
 
                 # Add units to Versailles
                 if home_type and work_type:
-                    u5 = versailles.add_unit(home_type, road, w5, 0.1)
-                    u6 = versailles.add_unit(work_type, road2, w4, 0.9)
+                    u5 = versailles.add_unit_on_way(home_type, road, w5, 0.1)
+                    u6 = versailles.add_unit_on_way(work_type, road2, w4, 0.9)
 
         print("Simulation loaded successfully")
         return True
@@ -564,7 +583,7 @@ class GlassBoxDemo:
             pygame.draw.line(self.screen, (70, 70, 120), (0, y), (self.width, y), 1)
 
         # Draw all cities
-        for city in self.simulation.cities():
+        for city_name, city in self.simulation.cities().items():
             self.draw_city(city, self.screen)
 
         # Draw UI on top
@@ -623,11 +642,11 @@ def main():
         print(f"Warning: Could not find simulation file")
 
         # Create a simple test city if no simulation file
-        from .city import City
-        from .map import MapType
-        from .path import PathType, WayType
-        from .unit import UnitType
-        from .vector import Vector3f
+        from city import City
+        from map import MapType
+        from path import PathType, WayType
+        from unit import UnitType
+        from vector import Vector3f
 
         city = City("TestCity")
         demo.simulation.add_city(city, Vector3f(0, 0, 0))
@@ -648,6 +667,7 @@ def main():
         road.addWay(WayType("Dirt", 0x8B4513), node4, node1)
 
         # Add a unit
+        # Create a unit at a node (not on a way)
         city.add_unit(UnitType("House", 0xFF0000), node1)
 
     # Run the demo

@@ -12,10 +12,10 @@ This file covers:
 import pytest
 from unittest.mock import MagicMock, patch
 
-from ..dijkstra import Dijkstra
-from ..node import Node
-from ..vector import Vector3D
-from ..resources import Resources
+from dijkstra import Dijkstra
+from node import Node
+from vector import Vector3D
+from resources import Resources
 
 
 class MockWay:

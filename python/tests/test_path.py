@@ -15,9 +15,9 @@ set up and that their behavior matches expectations from the original C++ simula
 
 import pytest
 import math
-from python.path import Path, Node, Way, PathType, WayType
-from python.vector import Vector3f
-from python.node import Node
+from path import Path, Node, Way, PathType, WayType
+from vector import Vector3f
+from node import Node
 
 # Mock classes for testing
 class MockUnitType:

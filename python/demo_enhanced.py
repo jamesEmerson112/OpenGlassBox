@@ -14,15 +14,15 @@ import pygame
 from typing import Dict, List, Optional, Tuple, Any, Set
 from dataclasses import dataclass, field
 
-from .simulation import Simulation
-from .city import City
-from .map import Map
-from .path import Path, Node, Way
-from .unit import Unit
-from .agent import Agent
-from .script_parser import Script
-from .vector import Vector3f
-from .debug_ui import DebugUI
+from simulation import Simulation
+from city import City
+from map import Map
+from path import Path, Node, Way
+from unit import Unit
+from agent import Agent
+from script_parser import Script
+from vector import Vector3f
+from debug_ui import DebugUI
 
 # Define colors
 WHITE = (255, 255, 255)
@@ -179,9 +179,9 @@ class GlassBoxDemo:
         self.setup_listeners()
 
         # Parse script types to get the definitions
-        from .map import MapType
-        from .path import PathType, WayType
-        from .unit import UnitType
+        from map import MapType
+        from path import PathType, WayType
+        from unit import UnitType
 
         # Get types from script
         road_type = None
@@ -639,11 +639,11 @@ def main():
         print(f"Warning: Could not find simulation file")
 
         # Create a simple test city if no simulation file
-        from .city import City
-        from .map import MapType
-        from .path import PathType, WayType
-        from .unit import UnitType
-        from .vector import Vector3f
+        from city import City
+        from map import MapType
+        from path import PathType, WayType
+        from unit import UnitType
+        from vector import Vector3f
 
         city = City("TestCity")
         demo.simulation.add_city(city, Vector3f(0, 0, 0))

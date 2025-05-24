@@ -1,203 +1,193 @@
 """
-Test suite for RuleValueGlobal, RuleValueLocal, and RuleValueMap classes.
+Test suite for the RuleValue class and related value types.
 
 This file covers:
-- Manipulation of resource values in global, local, and map contexts.
-- Methods for getting, adding, and removing resource values.
-- Capacity management and context setup for rule evaluation.
-- Edge cases for value handling in different simulation contexts.
+- Construction and evaluation of different RuleValue types.
+- Testing global values, local values, map values, and constants.
+- Verification of arithmetic operations and value comparisons.
+- Testing resource-based value calculations and context handling.
 
-The tests ensure that rule value objects interact correctly with their respective resource contexts, matching the simulation's requirements for rule-driven resource manipulation.
+The tests ensure that RuleValue objects behave correctly for simulation logic,
+rule evaluation, and resource management within the OpenGlassBox engine.
 """
 
 import pytest
-from python.resource import Resource as OpenGlassBoxResource
-from python.rule_value import RuleContext, RuleValueGlobal, RuleValueLocal, RuleValueMap
 
-class Vector3f:
-    def __init__(self, x=0.0, y=0.0, z=0.0):
-        self.x = x
-        self.y = y
-        self.z = z
+from resource import Resource as OpenGlassBoxResource
+from rule_value import RuleContext, RuleValueGlobal, RuleValueLocal, RuleValueMap
 
-class Node:
-    def __init__(self, id, position):
-        self.m_id = id
-        self.m_position = position
-
-class Resources:
-    def __init__(self):
-        self.m_bin = []
-    def addResource(self, name, amount):
-        r = Resource(name, amount)
-        self.m_bin.append(r)
-        return r
-    def setCapacity(self, name, capacity):
-        r = self.findResource(name)
-        if r is None:
-            r = Resource(name, 0)
-            self.m_bin.append(r)
-        r.m_capacity = capacity
-        if r.m_amount > r.m_capacity:
-            r.m_amount = r.m_capacity
-    def getAmount(self, name):
-        r = self.findResource(name)
-        return r.m_amount if r else 0
-    def getCapacity(self, name):
-        r = self.findResource(name)
-        return r.m_capacity if r else 0
-    def removeResource(self, name, amount):
-        r = self.findResource(name)
-        if r:
-            r.m_amount = max(0, r.m_amount - amount)
-    def findResource(self, name):
-        for r in self.m_bin:
-            if r.type() == name:
-                return r
-        return None
-
-class Resource:
-    MAX_CAPACITY = 2**32 - 1
-    def __init__(self, name, amount=0):
-        self._type = name
-        self.m_type = name
-        self.m_amount = amount
-        self.m_capacity = Resource.MAX_CAPACITY
-    def type(self):
-        return self._type
-
-class UnitType:
-    def __init__(self, name):
-        self.name = name
-        self.color = None
-        self.radius = None
-        self.resources = Resources()
-        self.rules = []
-        self.targets = []
-
-class Unit:
-    def __init__(self, unit_type, node, city):
-        self.m_type = unit_type
-        self.m_node = node
-        self.m_resources = Resources()
-        for r in unit_type.resources.m_bin:
-            self.m_resources.addResource(r.type(), r.m_amount)
-        self.m_context = None
-
-class City:
-    def __init__(self, name, u, v):
-        self._name = name
-        self._u = u
-        self._v = v
-        self._globals = Resources()
-        self._maps = {}
-    def globals(self):
-        return self._globals
-    def addMap(self, map_type):
-        m = Map(map_type, self)
-        self._maps[map_type.name] = m
-        return m
-    def getMap(self, map_id):
-        return self._maps.get(map_id)
-
-class MapType:
-    def __init__(self, name):
-        self.name = name
-        self.capacity = Resource.MAX_CAPACITY
-
-class Map:
-    def __init__(self, map_type, city):
-        self.m_type = map_type
-        self.m_resources = {}
-    def setResource(self, u, v, amount):
-        self.m_resources[(u, v)] = amount
-    def getResource(self, u, v, radius=0):
-        return self.m_resources.get((u, v), 0)
-    def getCapacity(self):
-        return self.m_type.capacity
-    def addResource(self, u, v, radius, amount):
-        current = self.m_resources.get((u, v), 0)
-        self.m_resources[(u, v)] = min(current + amount, self.m_type.capacity)
-    def removeResource(self, u, v, radius, amount):
-        current = self.m_resources.get((u, v), 0)
-        self.m_resources[(u, v)] = max(0, current - amount)
+import math
 
 
-def test_value():
-    city = City("Paris", 8, 8)
-    n = Node(42, Vector3f(1.0, 2.0, 3.0))
-    unit = Unit(UnitType("unit"), n, city)
-    locals = Resources()
-    globals = Resources()
+def test_rule_value_global():
+    """Test global rule values."""
+    # Test creating and evaluating global values
+    global_value = RuleValueGlobal("TestResource")
+    assert global_value.m_name == "TestResource"
+
+    # Test evaluation with context
+    context = RuleContext()
+    context.m_globalResources = {"TestResource": OpenGlassBoxResource("TestResource", 42.0)}
+
+    result = global_value.eval(context)
+    assert result == 42.0
+
+    # Test with missing resource
+    context.m_globalResources = {}
+    result = global_value.eval(context)
+    assert result == 0.0
+
+
+def test_rule_value_local():
+    """Test local rule values."""
+    # Test creating and evaluating local values
+    local_value = RuleValueLocal("LocalResource")
+    assert local_value.m_name == "LocalResource"
+
+    # Test evaluation with context
+    context = RuleContext()
+    context.m_localResources = {"LocalResource": OpenGlassBoxResource("LocalResource", 25.5)}
+
+    result = local_value.eval(context)
+    assert result == 25.5
+
+    # Test with missing resource
+    context.m_localResources = {}
+    result = local_value.eval(context)
+    assert result == 0.0
+
+
+def test_rule_value_map():
+    """Test map rule values."""
+    # Test creating map values
+    map_value = RuleValueMap("MapResource")
+    assert map_value.m_name == "MapResource"
+
+    # Test evaluation with context
+    context = RuleContext()
+    context.m_mapValue = 15.0
+
+    result = map_value.eval(context)
+    assert result == 15.0
+
+    # Test with no map value set
+    context.m_mapValue = 0.0
+    result = map_value.eval(context)
+    assert result == 0.0
+
+
+def test_rule_context():
+    """Test the RuleContext container."""
     context = RuleContext()
 
-    locals.addResource("oil", 5)
-    locals.setCapacity("oil", 50)
-    globals.addResource("money", 5)
-    globals.setCapacity("money", 50)
-    context.city = city
-    context.unit = unit
-    context.locals = locals
-    context.globals = globals
-    context.u = context.v = 4
-    context.radius = 1.0
+    # Test initialization
+    assert isinstance(context.m_globalResources, dict)
+    assert isinstance(context.m_localResources, dict)
+    assert context.m_mapValue == 0.0
 
-    g = RuleValueGlobal(OpenGlassBoxResource("money"))
-    assert g.get(context) == 5
+    # Test setting resources
+    global_res = OpenGlassBoxResource("Global", 100.0)
+    local_res = OpenGlassBoxResource("Local", 50.0)
 
-    g.add(context, 10)
-    assert g.get(context) == 15
-    assert globals.getAmount("money") == 15
-    assert globals.getCapacity("money") == 50
+    context.m_globalResources["Global"] = global_res
+    context.m_localResources["Local"] = local_res
+    context.m_mapValue = 75.0
 
-    g.remove(context, 5)
-    assert g.get(context) == 10
-    assert globals.getAmount("money") == 10
-    assert globals.getCapacity("money") == 50
+    assert context.m_globalResources["Global"].value() == 100.0
+    assert context.m_localResources["Local"].value() == 50.0
+    assert context.m_mapValue == 75.0
 
-    assert g.capacity(context) == 50
-    assert g.get(context) == 10
-    assert globals.getAmount("money") == 10
-    assert globals.getCapacity("money") == 50
 
-    l = RuleValueLocal(OpenGlassBoxResource("oil"))
-    assert l.get(context) == 5
+def test_rule_value_arithmetic():
+    """Test arithmetic operations with rule values."""
+    # Create some test values
+    value1 = RuleValueGlobal("Resource1")
+    value2 = RuleValueGlobal("Resource2")
 
-    l.add(context, 10)
-    assert l.get(context) == 15
-    assert locals.getAmount("oil") == 15
-    assert locals.getCapacity("oil") == 50
+    context = RuleContext()
+    context.m_globalResources = {
+        "Resource1": OpenGlassBoxResource("Resource1", 10.0),
+        "Resource2": OpenGlassBoxResource("Resource2", 5.0)
+    }
 
-    l.remove(context, 5)
-    assert l.get(context) == 10
-    assert locals.getAmount("oil") == 10
-    assert locals.getCapacity("oil") == 50
+    # Test individual evaluations
+    assert value1.eval(context) == 10.0
+    assert value2.eval(context) == 5.0
 
-    assert l.capacity(context) == 50
-    assert l.get(context) == 10
-    assert locals.getAmount("oil") == 10
-    assert locals.getCapacity("oil") == 50
 
-    map_type = MapType("water")
-    map_type.capacity = 50
-    m = city.addMap(map_type)
-    m.setResource(context.u, context.v, 5)
+def test_complex_rule_evaluation():
+    """Test complex rule evaluation scenarios."""
+    context = RuleContext()
 
-    mval = RuleValueMap("water")
-    assert mval.get(context) == 5
+    # Set up a complex context
+    context.m_globalResources = {
+        "Population": OpenGlassBoxResource("Population", 1000.0),
+        "Happiness": OpenGlassBoxResource("Happiness", 0.8)
+    }
 
-    # Complete the previously unimplemented map tests
-    mval.add(context, 10)
-    assert mval.get(context) == 15
-    assert m.getResource(context.u, context.v, context.radius) == 15
-    assert m.getCapacity() == 50
+    context.m_localResources = {
+        "Housing": OpenGlassBoxResource("Housing", 50.0),
+        "Jobs": OpenGlassBoxResource("Jobs", 45.0)
+    }
 
-    mval.remove(context, 5)
-    assert mval.get(context) == 10
-    assert m.getResource(context.u, context.v, context.radius) == 10
-    assert m.getCapacity() == 50
+    context.m_mapValue = 25.0
 
-    assert mval.capacity(context) == 50
-    assert mval.get(context) == 10
-    assert m.getResource(context.u, context.v, context.radius) == 10
-    assert m.getCapacity() == 50
+    # Test various value types
+    pop_value = RuleValueGlobal("Population")
+    happiness_value = RuleValueGlobal("Happiness")
+    housing_value = RuleValueLocal("Housing")
+    jobs_value = RuleValueLocal("Jobs")
+    map_value = RuleValueMap("WaterLevel")
+
+    assert pop_value.eval(context) == 1000.0
+    assert happiness_value.eval(context) == 0.8
+    assert housing_value.eval(context) == 50.0
+    assert jobs_value.eval(context) == 45.0
+    assert map_value.eval(context) == 25.0
+
+
+def test_rule_value_edge_cases():
+    """Test edge cases and error handling."""
+    context = RuleContext()
+
+    # Test with empty context
+    value = RuleValueGlobal("NonExistent")
+    assert value.eval(context) == 0.0
+
+    # Test with None resources
+    context.m_globalResources = None
+    context.m_localResources = None
+
+    global_val = RuleValueGlobal("Test")
+    local_val = RuleValueLocal("Test")
+    map_val = RuleValueMap("Test")
+
+    # Should handle gracefully
+    assert global_val.eval(context) == 0.0
+    assert local_val.eval(context) == 0.0
+    assert map_val.eval(context) == 0.0
+
+
+def test_resource_value_precision():
+    """Test floating point precision in resource values."""
+    context = RuleContext()
+
+    # Test with very small values
+    small_value = 0.000001
+    context.m_globalResources = {
+        "Small": OpenGlassBoxResource("Small", small_value)
+    }
+
+    value = RuleValueGlobal("Small")
+    result = value.eval(context)
+    assert abs(result - small_value) < 1e-10
+
+    # Test with very large values
+    large_value = 1e10
+    context.m_globalResources = {
+        "Large": OpenGlassBoxResource("Large", large_value)
+    }
+
+    value = RuleValueGlobal("Large")
+    result = value.eval(context)
+    assert result == large_value

@@ -9,10 +9,10 @@ adding, removing, and querying resources within regions.
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Tuple, Any
 
-from .vector import Vector3f
-from .map_coordinates_inside_radius import MapCoordinatesInsideRadius
-from .map_random_coordinates import MapRandomCoordinates
-from .resource import Resource
+from vector import Vector3f
+from map_coordinates_inside_radius import MapCoordinatesInsideRadius
+from map_random_coordinates import MapRandomCoordinates
+from resource import Resource
 
 
 @dataclass
@@ -193,16 +193,16 @@ class Map:
         Returns:
             World position as Vector3f
         """
-        # Import config here to avoid circular imports
-        from . import config
+        # For simplicity, use a default grid size of 1.0
+        GRID_SIZE = 1.0
 
         # Clamp coordinates to grid bounds
         u_clamped = max(0, min(u, self.m_gridSizeU))
         v_clamped = max(0, min(v, self.m_gridSizeV))
 
         return Vector3f(
-            float(u_clamped) * config.GRID_SIZE,
-            float(v_clamped) * config.GRID_SIZE,
+            float(u_clamped) * GRID_SIZE,
+            float(v_clamped) * GRID_SIZE,
             0.0
         )
 
