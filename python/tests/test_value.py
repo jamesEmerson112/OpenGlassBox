@@ -11,8 +11,8 @@ The tests ensure that rule value objects interact correctly with their respectiv
 """
 
 import pytest
-from resource import Resource as OpenGlassBoxResource
-from rule_value import RuleContext, RuleValueGlobal, RuleValueLocal, RuleValueMap
+from python.resource import Resource as OpenGlassBoxResource
+from python.rule_value import RuleContext, RuleValueGlobal, RuleValueLocal, RuleValueMap
 
 class Vector3f:
     def __init__(self, x=0.0, y=0.0, z=0.0):

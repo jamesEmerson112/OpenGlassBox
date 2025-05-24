@@ -11,8 +11,8 @@ The tests ensure that resource collections behave as expected for all basic oper
 """
 
 import pytest
-from .. import resource
-from ..resource import Resource
+from python import resource
+from python.resource import Resource
 from ..resources import Resources
 
 

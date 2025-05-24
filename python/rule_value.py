@@ -8,7 +8,7 @@ resources in different contexts within the simulation.
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
 
-from resource import Resource
+from python.resource import Resource
 
 
 class RuleContext:

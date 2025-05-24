@@ -119,7 +119,7 @@
       - [x] test_translate: Test translating all entities together (port from TestsCity.cpp)
       - [x] test_update and test_update_remove_agent: Test simulation step logic (port from TestsCity.cpp)
 
-  - [ ] **Simulation Logic**
+  - [x] **Simulation Logic**
     - [x] **Simulation** (Simulation.hpp/cpp → simulation.py)
       - [x] Port `Simulation` class as main control system
       - [x] Implement simulation loop and update methods
@@ -129,29 +129,29 @@
       - [x] Add event handling system
       - [x] Support saving/loading simulation state
 
-    - [ ] **Rule** (Rule.hpp/cpp → rule.py)
-      - [ ] Port `Rule` class with condition and action components
-      - [ ] Implement rule evaluation logic
-      - [ ] Add command execution capabilities
-      - [ ] Ensure proper rule triggering
-      - [ ] Add rule management utilities
-      - [ ] Include rule ordering and priority system
+    - [x] **Rule** (Rule.hpp/cpp → rule.py)
+      - [x] Port `Rule` class with condition and action components
+      - [x] Implement rule evaluation logic
+      - [x] Add command execution capabilities
+      - [x] Ensure proper rule triggering
+      - [x] Add rule management utilities
+      - [x] Include rule ordering and priority system
 
-    - [ ] **RuleCommand** (RuleCommand.hpp/cpp → rule_command.py)
-      - [ ] Port command types and execution logic
-      - [ ] Implement all command actions from C++ version
-      - [ ] Add parameter handling
-      - [ ] Create command factory methods
-      - [ ] Include execution context management
-      - [ ] Support command sequencing
+    - [x] **RuleCommand** (RuleCommand.hpp/cpp → rule_command.py)
+      - [x] Port command types and execution logic
+      - [x] Implement all command actions from C++ version
+      - [x] Add parameter handling
+      - [x] Create command factory methods
+      - [x] Include execution context management
+      - [x] Support command sequencing
 
-    - [ ] **ScriptParser** (ScriptParser.hpp/cpp → script_parser.py)
-      - [ ] Port script parsing functionality
-      - [ ] Implement token parsing and interpretation
-      - [ ] Add error handling and reporting
-      - [ ] Support comment handling
-      - [ ] Create utilities for script validation
-      - [ ] Add script debugging aids
+    - [x] **ScriptParser** (ScriptParser.hpp/cpp → script_parser.py)
+      - [x] Port script parsing functionality
+      - [x] Implement token parsing and interpretation
+      - [x] Add error handling and reporting
+      - [x] Support comment handling
+      - [x] Create utilities for script validation
+      - [x] Add script debugging aids
 
     - [x] **Resources** (Resources.hpp/cpp → resources.py)
       - [x] Port `Resources` container class
@@ -183,23 +183,27 @@
       - [x] Include bounds checking and validation
       - [x] Support constrained randomization
 
-  - [ ] **Demo/UI**
-    - [ ] **Choose Python UI Framework** (for demo.py)
-      - [ ] Research suitable Python UI frameworks (pygame, pyglet, kivy, etc.)
-      - [ ] Evaluate compatibility with simulation requirements
-      - [ ] Assess performance for real-time simulation rendering
-      - [ ] Consider cross-platform compatibility
-      - [ ] Determine learning curve and documentation quality
+  - [x] **Demo/UI**
+    - [x] **Choose Python UI Framework** (for demo.py)
+      - [x] Research suitable Python UI frameworks (pygame, pyglet, kivy, etc.)
+      - [x] Evaluate compatibility with simulation requirements
+      - [x] Assess performance for real-time simulation rendering
+      - [x] Consider cross-platform compatibility
+      - [x] Determine learning curve and documentation quality
+      - [x] Selected Pygame as the UI framework due to its similarity to SDL
 
-    - [ ] **Port Demo Logic** (demo/src/* → demo.py)
-      - [ ] Create base application structure
-      - [ ] Implement rendering loop
-      - [ ] Add user input handling
-      - [ ] Port camera and view controls
-      - [ ] Implement entity visualization
-      - [ ] Create UI controls and panels
-      - [ ] Add simulation control interface
-      - [ ] Implement debug visualization options
+    - [x] **Port Demo Logic** (demo/src/* → demo.py)
+      - [x] Create base application structure
+      - [x] Implement rendering loop
+      - [x] Add user input handling
+      - [x] Port camera and view controls
+      - [x] Implement entity visualization
+      - [x] Create UI controls and panels
+      - [x] Add simulation control interface
+      - [x] Implement debug visualization options
+      - [x] Created demo.py with a GlassBoxDemo class for visualization
+      - [x] Created run_demo.py script to easily launch the demo
+      - [x] Created proper data directory structure for Python port (python/data/simulations)
 
 - [ ] **4. Testing & Validation**
   - [ ] Ensure all tests pass for each ported module
@@ -465,255 +469,4 @@ The implementation follows a bottom-up approach based on the dependency hierarch
     - [x] Create comprehensive test_unit.py
     - [x] Test resource production and consumption
     - [x] Test agent creation and interaction
-    - [x] Test rule application and state changes
-    - [x] Add detailed docstrings for all methods
-    - [x] Include examples for common unit configurations
-
-- [x] Agent.hpp/cpp → agent.py, test_agent.py
-  - [x] Core agent structure and properties
-    - [x] Create Agent class with type hints
-    - [x] Implement constructor with agent type, capacity, speed
-    - [x] Add state machine for agent behavior
-    - [x] Create position tracking with interpolation
-    - [x] Implement source/destination node tracking
-    - [x] Add unique ID and reference tracking
-    - [x] Create visualization properties (color, shape, size)
-
-  - [x] Movement and navigation
-    - [x] Implement current way and progress tracking
-    - [x] Add position interpolation along ways
-    - [x] Create path following with turning decisions
-    - [x] Implement speed and acceleration management
-    - [x] Add pathfinding integration with Dijkstra
-    - [x] Create collision detection and avoidance
-    - [x] Implement traffic density awareness
-
-  - [x] Resource handling
-    - [x] Add resource storage with type and capacity limits
-    - [x] Implement resource pickup protocol
-    - [x] Create resource delivery mechanisms
-    - [x] Add multiple resource type support
-    - [x] Implement partial pickup/delivery capabilities
-    - [x] Create resource transfer verification
-
-  - [x] Lifecycle and behavior
-    - [x] Implement creation and registration with city
-    - [x] Add destruction and cleanup methods
-    - [x] Create update method for simulation steps
-    - [x] Implement state transitions based on conditions
-    - [x] Add task prioritization for multiple objectives
-    - [x] Create error recovery for invalid paths/targets
-
-  - [x] Tests and documentation
-    - [x] Create comprehensive test_agent.py
-    - [x] Test movement and path following
-    - [x] Test resource pickup and delivery
-    - [x] Test state transitions and lifecycle
-    - [x] Test interaction with units and paths
-    - [x] Add detailed docstrings for all methods
-    - [x] Include examples for common agent behaviors
-
-- [x] Resources.hpp/cpp → resources.py, test_resources.py (Resource container)
-  - [x] Core container structure
-    - [x] Create Resources class as dictionary-like container
-    - [x] Implement mapping from resource names to quantities
-    - [x] Add type annotations for all methods
-    - [x] Create iterator and mapping protocol support
-    - [x] Implement capacity management for collections
-    - [x] Add indexing and direct access methods
-
-  - [x] Resource operations
-    - [x] Implement add/get/set/remove operations
-    - [x] Create resource transfer between containers
-    - [x] Add batch operations for multiple resources
-    - [x] Implement resource transformation/conversion
-    - [x] Create resource matching and filtering
-    - [x] Add threshold checks (min/max quantities)
-
-  - [x] Advanced features
-    - [x] Implement resource change tracking/history
-    - [x] Add rate limiting for additions/removals
-    - [x] Create event triggers for threshold crossing
-    - [x] Implement resource priority system
-    - [x] Add resource decay/loss over time (optional)
-
-  - [x] Utility methods
-    - [x] Create serialization/deserialization
-    - [x] Implement deep/shallow copy operations
-    - [x] Add diff calculation between collections
-    - [x] Create string representation for debugging
-    - [x] Implement container arithmetic (add/subtract)
-
-  - [x] Tests and documentation
-    - [x] Create comprehensive test_resources.py
-    - [x] Test all core operations (add, get, remove)
-    - [x] Test resource transfers and transformations
-    - [x] Test capacity management and limitations
-    - [x] Test edge cases (empty, overflow, negative)
-    - [x] Add detailed docstrings for all methods
-    - [x] Include examples for common resource operations
-
-### Phase 3C: Coordination Container
-- [x] City.hpp/cpp → city.py, test_city.py
-  - [x] Core city structure and initialization
-    - [x] Create City class with comprehensive type hints
-    - [x] Implement constructor with name, dimensions, position
-    - [x] Add configuration parameters and properties
-    - [x] Create initialization and reset methods
-    - [x] Implement event system for city-wide notifications
-    - [x] Add debugging and logging infrastructure
-
-  - [x] Entity registration and management
-    - [x] Implement map collection with add/get/remove methods
-    - [x] Create path network management system
-    - [x] Add unit registry with type-based indexing
-    - [x] Implement agent tracking and lifecycle management
-    - [x] Create entity lookup by ID, type, position
-    - [x] Add spatial partitioning for efficient queries
-
-  - [x] Spatial operations and coordination
-    - [x] Implement world-to-map coordinate conversion
-    - [x] Add methods for valid entity placement checking
-    - [x] Create proximity searches for entities
-    - [x] Implement radius-based entity queries
-    - [x] Add city boundary management
-    - [x] Create translation methods for moving the entire city
-
-  - [x] Simulation control and updates
-    - [x] Implement update method with timestep control
-    - [x] Create update order management for entities
-    - [x] Add simulation pause/resume capabilities
-    - [x] Implement rule application scheduling
-    - [x] Create simulation metrics collection
-    - [x] Add performance monitoring for simulation steps
-
-  - [x] Resource management and economics
-    - [x] Implement global resource tracking and metrics
-    - [x] Add resource production/consumption monitoring
-    - [x] Create resource flow visualization utilities
-    - [x] Implement resource exchange coordination
-    - [x] Add economic indicators and statistics
-    - [x] Create resource distribution optimization
-
-  - [x] Advanced features
-    - [x] Implement save/load functionality
-    - [x] Add city growth and evolution metrics
-    - [x] Create dynamic entity creation based on conditions
-    - [x] Implement city subdivision for scaling
-    - [x] Add multi-threading support for large cities
-
-  - [x] Tests and documentation
-    - [x] Create comprehensive test_city.py
-    - [x] Test entity registration and management
-    - [x] Test spatial operations and queries
-    - [x] Test simulation step processing
-    - [x] Test resource tracking and flow
-    - [x] Add detailed docstrings for all methods
-    - [x] Include examples for city creation and configuration
-
-### Phase 4: Simulation Logic & Rules
-- [x] Rule.hpp/cpp → rule.py, test_rule.py
-  - [x] Rule Class Implementation
-    - [x] Create Rule class with condition and action components
-    - [x] Implement rule type and priority system
-    - [x] Add rule triggering and activation logic
-    - [x] Create rule state management
-  - [x] Rule Evaluation
-    - [x] Implement condition evaluation logic
-    - [x] Add action execution capabilities
-    - [x] Create rule chaining mechanisms
-    - [x] Implement targeting and filter systems
-  - [x] Rule Management
-    - [x] Add rule registration/deregistration
-    - [x] Implement rule scheduling and prioritization
-    - [x] Create rule dependency management
-    - [x] Add rule conflict resolution
-  - [x] Testing & Documentation
-    - [x] Create comprehensive tests in test_rule.py
-    - [x] Test condition evaluation and action execution
-    - [x] Test rule chaining and dependencies
-    - [x] Document rule creation and management
-
-- [x] RuleCommand.hpp/cpp → rule_command.py, test_rule_command.py
-  - [x] Command Infrastructure
-    - [x] Create command base class or interface
-    - [x] Implement command factory for instantiation
-    - [x] Add command parameter validation
-    - [x] Create command execution context
-  - [x] Command Types
-    - [x] Implement resource manipulation commands
-    - [x] Add agent creation/control commands
-    - [x] Create unit activation/state commands
-    - [x] Implement map modification commands
-  - [x] Command Chain
-    - [x] Add command sequencing capabilities
-    - [x] Implement conditional command execution
-    - [x] Create command retry/fallback mechanisms
-    - [x] Add rollback capabilities for failed commands
-  - [x] Testing & Documentation
-    - [x] Create comprehensive tests in test_rule_command.py
-    - [x] Test all command types and their execution
-    - [x] Test command chaining and conditional execution
-    - [x] Document command creation and usage
-
-- [x] ScriptParser.hpp/cpp → script_parser.py, test_script_parser.py
-  - [x] Parser Infrastructure
-    - [x] Create tokenizer for script syntax
-    - [x] Implement abstract syntax tree (AST) representation
-    - [x] Add syntax validation and error reporting
-    - [x] Create symbol table for variables and references
-  - [x] Script Elements
-    - [x] Implement rule definition parsing
-    - [x] Add resource declaration parsing
-    - [x] Create entity type definition parsing
-    - [x] Implement simulation parameter parsing
-  - [x] Interpreter
-    - [x] Add script execution engine
-    - [x] Implement variable and scope management
-    - [x] Create dynamic evaluation of expressions
-    - [x] Add command creation from parsed script
-  - [x] Testing & Documentation
-    - [x] Create comprehensive tests in test_script_parser.py
-    - [x] Test parsing of various script elements
-    - [x] Test script validation and error handling
-    - [x] Document script syntax and usage
-
-- [x] Simulation.hpp/cpp → simulation.py, test_simulation.py
-  - [x] Simulation Core
-    - [x] Create Simulation class as main controller
-    - [x] Implement time step and update cycle
-    - [x] Add simulation initialization and reset
-    - [x] Create simulation state management
-  - [x] Entity Coordination
-    - [x] Implement city and entities registration
-    - [x] Add ordered update mechanism for all entities
-    - [x] Create event propagation system
-    - [x] Implement global query capabilities
-  - [x] Rule Management
-    - [x] Add rule registration and evaluation system
-    - [x] Implement rule scheduling across entities
-    - [x] Create rule dependency resolution
-    - [x] Add optimization for rule application
-  - [x] Script Integration
-    - [x] Implement script loading and parsing
-    - [x] Add script-based simulation configuration
-    - [x] Create dynamic rule creation from scripts
-    - [x] Implement script debugging utilities
-  - [x] Testing & Documentation
-    - [x] Create comprehensive tests in test_simulation.py
-    - [x] Test simulation initialization and stepping
-    - [x] Test entity coordination and rule application
-    - [x] Document simulation setup and configuration
-
-### Phase 5: Demo/UI (after core simulation engine is complete)
-- [ ] Port demo logic to demo.py, test_demo.py (choose Python UI library)
-
----
-
-## How to Run Python Tests
-
-- With pytest:
-  ```
-  pytest python/tests/test_agent.py
-  ```
-- With unittest:
+    - [x] Test rule
