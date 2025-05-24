@@ -1,24 +1,18 @@
 """
 Simulation module for OpenGlassBox simulation engine.
 
-This module provides the main entry point for the simulation system:
-- The Simulation class manages a collection of City objects
-- Handles updating of all simulation components
-- Provides event listeners for simulation lifecycle events
-- Inherits from Script to access parsed script resources
-
-The Simulation class is responsible for maintaining the global state of the
-simulation and coordinating updates across all cities.
+This module provides the main entry point for the simulation system,
+exactly matching the C++ Simulation class behavior.
 """
 
-from typing import Dict, Optional, Dict, Union, Any
+from typing import Dict, Optional, Any
 from abc import ABC, abstractmethod
 
 from .city import City
 from .vector import Vector3f
 from .script_parser import Script
 
-# Constants for simulation timing
+# Constants matching C++ #define values
 MAX_ITERATIONS_PER_UPDATE = 20
 TICKS_PER_SECOND = 200.0
 
@@ -26,87 +20,93 @@ TICKS_PER_SECOND = 200.0
 class Simulation(Script):
     """
     Entry point class managing a collection of Cities and running simulation on them.
+    Equivalent to C++ Simulation class.
 
-    The Simulation class extends Script to access parsed simulation resources and
-    manages the creation, retrieval, and updating of city objects within the simulation.
-    In the current phase of development, cities are not connected between them.
+    In this current phase of development Cities are not connected between them.
     """
 
-    class Listener(ABC):
+    class Listener:
         """
-        Abstract base class for simulation event listeners.
-
-        Implement this interface to receive notifications about simulation events
-        such as cities being added or removed.
+        Simulation event listener.
+        Equivalent to C++ Simulation::Listener class.
         """
 
-        def on_city_added(self, city: City) -> None:
+        def __del__(self):
+            """Virtual destructor equivalent."""
+            pass
+
+        def onCityAdded(self, city: City) -> None:
             """
             Called when a city is added to the simulation.
+            Equivalent to C++ virtual void onCityAdded(City& city).
 
             Args:
                 city: The city that was added
             """
             pass
 
-        def on_city_removed(self, city: City) -> None:
+        def onCityRemoved(self, city: City) -> None:
             """
             Called when a city is removed from the simulation.
+            Equivalent to C++ virtual void onCityRemoved(City& city).
 
             Args:
                 city: The city that was removed
             """
             pass
 
-    class DefaultListener(Listener):
-        """Default implementation of the Listener interface that does nothing."""
-        pass
-
-    def __init__(self, grid_size_u: int = 32, grid_size_v: int = 32):
+    def __init__(self, gridSizeU: int = 32, gridSizeV: int = 32):
         """
         Create a simulation game.
+        Equivalent to C++ Simulation(uint32_t gridSizeU, uint32_t gridSizeV).
 
         Args:
-            grid_size_u: The grid dimension along the U-axis for creating maps
-            grid_size_v: The grid dimension along the V-axis for creating maps
+            gridSizeU: The grid dimension along the U-axis for creating maps
+            gridSizeV: The grid dimension along the V-axis for creating maps
         """
         super().__init__()
-        self.m_gridSizeU = grid_size_u
-        self.m_gridSizeV = grid_size_v
+        self.m_gridSizeU = gridSizeU
+        self.m_gridSizeV = gridSizeV
         self.m_time = 0.0
         self.m_cities: Dict[str, City] = {}
-        self.m_listener: Simulation.Listener = Simulation.DefaultListener()
 
-    def set_listener(self, listener: 'Simulation.Listener') -> None:
+        # Static listener equivalent to C++ static Simulation::Listener listener
+        static_listener = Simulation.Listener()
+        self.setListener(static_listener)
+
+    def setListener(self, listener: 'Simulation.Listener') -> None:
         """
         Set the listener for simulation events.
+        Equivalent to C++ void setListener(Simulation::Listener& listener).
 
         Args:
             listener: The listener object to receive event notifications
         """
         self.m_listener = listener
 
-    def update(self, delta_time: float = 0.005) -> None:
+    def update(self, deltaTime: float) -> None:
         """
         Update the game simulation.
+        Equivalent to C++ void update(float const deltaTime).
 
         Args:
-            delta_time: The delta of time in seconds from the previous update
+            deltaTime: The delta of time in seconds from the previous update
         """
-        self.m_time += delta_time
+        self.m_time += deltaTime
 
-        # Rules are executed at TICKS_PER_SECOND intervals
-        max_iterations = MAX_ITERATIONS_PER_UPDATE
-        while (self.m_time >= 1.0 / TICKS_PER_SECOND) and (max_iterations > 0):
+        # Rules are execute at TICKS_PER_SECOND intervals
+        maxIterations = MAX_ITERATIONS_PER_UPDATE
+        while (self.m_time >= 1.0 / TICKS_PER_SECOND) and (maxIterations > 0):
             self.m_time -= 1.0 / TICKS_PER_SECOND
-            max_iterations -= 1
+            maxIterations -= 1
 
             for city in self.m_cities.values():
                 city.update()
 
-    def add_city(self, name: str, position: Vector3f) -> City:
+    def addCity(self, name: str, position: Vector3f) -> City:
         """
-        Create a new City and replace the previous city if it already exists.
+        Create a new City and replace the previous city if already exists.
+        Equivalent to C++ City& addCity(std::string const& name, Vector3f position).
 
         Args:
             name: The name of the city to add
@@ -117,12 +117,14 @@ class Simulation(Script):
         """
         city = City(name, position, self.m_gridSizeU, self.m_gridSizeV)
         self.m_cities[name] = city
-        self.m_listener.on_city_added(city)
+        self.m_listener.onCityAdded(city)
         return city
 
-    def get_city(self, name: str) -> City:
+    def getCity(self, name: str) -> City:
         """
-        Get the City referred to by its name.
+        Get the City referred to by its name or throw an exception if the
+        given name does not match any held cities.
+        Equivalent to C++ City& getCity(std::string const& name).
 
         Args:
             name: The name of the city to retrieve
@@ -133,11 +135,35 @@ class Simulation(Script):
         Raises:
             KeyError: If the given name does not match any held cities
         """
-        return self.m_cities[name]
+        try:
+            return self.m_cities[name]
+        except KeyError:
+            raise KeyError(f"City '{name}' not found")
+
+    def getCityConst(self, name: str) -> City:
+        """
+        Get the City referred to by its name or throw an exception if the
+        given name does not match any held cities (const version).
+        Equivalent to C++ City const& getCity(std::string const& name) const.
+
+        Args:
+            name: The name of the city to retrieve
+
+        Returns:
+            The City object with the given name
+
+        Raises:
+            KeyError: If the given name does not match any held cities
+        """
+        try:
+            return self.m_cities[name]
+        except KeyError:
+            raise KeyError(f"City '{name}' not found")
 
     def cities(self) -> Dict[str, City]:
         """
-        Get the collection of cities.
+        Getter: return the collection of cities.
+        Equivalent to C++ Cities const& cities() const.
 
         Returns:
             Dictionary mapping city names to City objects

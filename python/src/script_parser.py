@@ -1,21 +1,14 @@
 """
 Script parser implementation for OpenGlassBox simulation engine.
 
-This module implements the parsing functionality for simulation configuration scripts:
-- Resource definitions
-- Path definitions
-- Agent definitions
-- Map definitions
-- Unit definitions
-- Rule definitions and commands
-
-The Script class parses and stores these elements for use in the simulation.
+This module implements the parsing functionality for simulation configuration scripts
+that exactly matches the C++ ScriptParser behavior.
 """
 
 import os
-from typing import Dict, List, Optional, Any, Tuple, TextIO
+import errno
+from typing import Dict, List, Optional, Any, TextIO
 from dataclasses import dataclass, field
-from enum import Enum
 
 from .resource import Resource
 from .resources import Resources
@@ -64,13 +57,15 @@ class UnitType:
     rules: List[RuleUnit] = field(default_factory=list)
     resources: Optional[Resources] = None
 
+    def __post_init__(self):
+        if self.resources is None:
+            self.resources = Resources()
+
 
 class Script:
     """
     Parse a simulation script and store internally all types and simulation rules.
-
-    This class reads a simulation script file and extracts all the definitions
-    for resources, paths, units, maps, agents, and rules.
+    Equivalent to C++ Script class.
     """
 
     def __init__(self):
@@ -90,6 +85,7 @@ class Script:
     def parse(self, filename: str) -> bool:
         """
         Parse the simulation file and fill its internal states.
+        Equivalent to C++ Script::parse().
 
         Args:
             filename: Path to the simulation script file
@@ -100,28 +96,30 @@ class Script:
         print(f"Parsing script '{filename}'")
 
         try:
-            if not os.path.exists(filename):
-                print(f"Failed opening '{filename}': File not found")
-                self.m_success = False
-                return False
-
-            with open(filename, 'r') as self.m_file:
-                try:
-                    self.parseScript()
-                    self.m_success = True
-                    print("  done")
-                except Exception as e:
-                    print(f"Failed parsing script '{filename}' at token '{self.m_token}' Reason was: {str(e)}")
-                    self.m_success = False
-        except Exception as e:
-            print(f"Failed opening '{filename}' Reason: {str(e)}")
+            self.m_file = open(filename, 'r')
+        except IOError as e:
+            print(f"Failed opening '{filename}' Reason '{os.strerror(e.errno)}'")
             self.m_success = False
+            return self.m_success
+
+        try:
+            self.parseScript()
+            self.m_success = True
+            print("  done")
+        except Exception as e:
+            print(f"Failed parsing script '{filename}' at token '{self.m_token}' Reason was '{str(e)}'")
+            self.m_success = False
+        finally:
+            if self.m_file:
+                self.m_file.close()
+                self.m_file = None
 
         return self.m_success
 
     def nextToken(self) -> str:
         """
-        Get the next token from the script file.
+        Split the script file into tokens. Return the reference of the last token.
+        Equivalent to C++ Script::nextToken().
 
         Returns:
             The next token as a string
@@ -130,29 +128,29 @@ class Script:
             self.m_token = ""
             return self.m_token
 
-        tokens = []
+        # Read next whitespace-separated token
+        self.m_token = ""
         while True:
             char = self.m_file.read(1)
-            if not char:
+            if not char:  # EOF
                 break
-
-            # Skip whitespace between tokens
             if char.isspace():
-                if tokens:
+                if self.m_token:  # End of current token
                     break
+                # Skip whitespace before token
                 continue
+            self.m_token += char
 
-            tokens.append(char)
+        # Uncomment for debugging
+        # if self.m_token:
+        #     print(f"I read '{self.m_token}'")
 
-        self.m_token = ''.join(tokens)
         return self.m_token
 
     def parseScript(self) -> None:
         """
-        Parse the entire script, processing all section types.
-
-        Raises:
-            RuntimeError: If the script has invalid syntax
+        Entry point method for parsing the script.
+        Equivalent to C++ Script::parseScript().
         """
         while True:
             empty = (len(self.m_token) == 0)
@@ -176,17 +174,12 @@ class Script:
                 if not empty:
                     return
                 # Empty file detection
-                raise RuntimeError("Empty file")
+                raise RuntimeError("parseScript()")
             else:
-                raise RuntimeError(f"Unknown section: {token}")
+                raise RuntimeError("parseScript()")
 
     def parseResources(self) -> None:
-        """
-        Parse the resources section of the script.
-
-        Raises:
-            RuntimeError: If the section has invalid syntax
-        """
+        """Parse the resources section."""
         while True:
             token = self.nextToken()
             if token == "end":
@@ -194,31 +187,18 @@ class Script:
             elif token == "resource":
                 self.parseResource()
             else:
-                raise RuntimeError(f"Expected 'end' or 'resource', got '{token}'")
+                raise RuntimeError("parseResources()")
 
     def parseResource(self) -> None:
-        """
-        Parse a single resource definition.
-
-        Raises:
-            RuntimeError: If the resource definition has invalid syntax
-        """
+        """Parse a single resource definition."""
         name = self.nextToken()
         self.m_resources[name] = Resource(name)
 
     def parseResourcesArray(self, resources: Resources) -> None:
-        """
-        Parse an array of resource definitions.
-
-        Args:
-            resources: Resources object to populate
-
-        Raises:
-            RuntimeError: If the array has invalid syntax
-        """
+        """Parse an array of resource definitions."""
         token = self.nextToken()
         if token != "[":
-            raise RuntimeError("Expected '['")
+            raise RuntimeError("parseResourcesArray()")
 
         while True:
             token = self.nextToken()
@@ -227,21 +207,14 @@ class Script:
 
             resource = self.getResource(token)
             amount = self._toUint(self.nextToken())
+            # FIXME should be setAmount
             resources.addResource(resource.type(), amount)
 
     def parseCapacitiesArray(self, resources: Resources) -> None:
-        """
-        Parse an array of capacity definitions.
-
-        Args:
-            resources: Resources object to populate with capacities
-
-        Raises:
-            RuntimeError: If the array has invalid syntax
-        """
+        """Parse an array of capacity definitions."""
         token = self.nextToken()
         if token != "[":
-            raise RuntimeError("Expected '['")
+            raise RuntimeError("parseCapacitiesArray()")
 
         while True:
             token = self.nextToken()
@@ -253,12 +226,7 @@ class Script:
             resources.setCapacity(resource.type(), capacity)
 
     def parsePaths(self) -> None:
-        """
-        Parse the paths section of the script.
-
-        Raises:
-            RuntimeError: If the section has invalid syntax
-        """
+        """Parse the paths section."""
         while True:
             token = self.nextToken()
             if token == "end":
@@ -266,17 +234,12 @@ class Script:
             elif token == "path":
                 self.parsePath()
             else:
-                raise RuntimeError(f"Expected 'end' or 'path', got '{token}'")
+                raise RuntimeError("parsePaths()")
 
     def parsePath(self) -> None:
-        """
-        Parse a single path definition.
-
-        Raises:
-            RuntimeError: If the path definition has invalid syntax
-        """
+        """Parse a single path definition."""
         name = self.nextToken()
-        path = PathType(name=name)
+        path = PathType(name)
         self.m_pathTypes[path.name] = path
 
         while True:
@@ -285,15 +248,10 @@ class Script:
                 path.color = self._toColor(self.nextToken())
                 return
             else:
-                raise RuntimeError(f"Expected 'color', got '{token}'")
+                raise RuntimeError("parsePath()")
 
     def parseWays(self) -> None:
-        """
-        Parse the ways/segments section of the script.
-
-        Raises:
-            RuntimeError: If the section has invalid syntax
-        """
+        """Parse the ways/segments section."""
         while True:
             token = self.nextToken()
             if token == "end":
@@ -301,17 +259,12 @@ class Script:
             elif token == "segment":
                 self.parseWay()
             else:
-                raise RuntimeError(f"Expected 'end' or 'segment', got '{token}'")
+                raise RuntimeError("parseWays()")
 
     def parseWay(self) -> None:
-        """
-        Parse a single way/segment definition.
-
-        Raises:
-            RuntimeError: If the way definition has invalid syntax
-        """
+        """Parse a single way/segment definition."""
         name = self.nextToken()
-        seg = WayType(name=name)
+        seg = WayType(name)
         self.m_segmentTypes[seg.name] = seg
 
         while True:
@@ -320,15 +273,10 @@ class Script:
                 seg.color = self._toColor(self.nextToken())
                 return
             else:
-                raise RuntimeError(f"Expected 'color', got '{token}'")
+                raise RuntimeError("parseWay()")
 
     def parseAgents(self) -> None:
-        """
-        Parse the agents section of the script.
-
-        Raises:
-            RuntimeError: If the section has invalid syntax
-        """
+        """Parse the agents section."""
         while True:
             token = self.nextToken()
             if token == "end":
@@ -336,17 +284,12 @@ class Script:
             elif token == "agent":
                 self.parseAgent()
             else:
-                raise RuntimeError(f"Expected 'end' or 'agent', got '{token}'")
+                raise RuntimeError("parseAgents()")
 
     def parseAgent(self) -> None:
-        """
-        Parse a single agent definition.
-
-        Raises:
-            RuntimeError: If the agent definition has invalid syntax
-        """
+        """Parse a single agent definition."""
         name = self.nextToken()
-        agent = AgentType(name=name, speed=0, radius=0, color=0)
+        agent = AgentType(name=name, speed=0.0, radius=0, color=0)
         self.m_agentTypes[agent.name] = agent
 
         while True:
@@ -357,15 +300,10 @@ class Script:
                 agent.speed = self._toFloat(self.nextToken())
                 return
             else:
-                raise RuntimeError(f"Expected 'color' or 'speed', got '{token}'")
+                raise RuntimeError("parseAgents()")
 
     def parseRules(self) -> None:
-        """
-        Parse the rules section of the script.
-
-        Raises:
-            RuntimeError: If the section has invalid syntax
-        """
+        """Parse the rules section."""
         while True:
             token = self.nextToken()
             if token == "end":
@@ -375,71 +313,50 @@ class Script:
             elif token == "unitRule":
                 self.parseRuleUnit()
             else:
-                raise RuntimeError(f"Expected 'end', 'mapRule', or 'unitRule', got '{token}'")
+                raise RuntimeError("parseRules()")
 
     def parseRuleMap(self) -> None:
-        """
-        Parse a map rule definition.
-
-        Raises:
-            RuntimeError: If the rule definition has invalid syntax
-        """
+        """Parse a map rule definition."""
         name = self.nextToken()
-        type_def = RuleMapType(name=name)
+        rule_type = RuleMapType(name)
 
         while True:
             token = self.nextToken()
             if token == "end":
-                rule = RuleMap(type_def)
+                rule = RuleMap(rule_type)
                 self.m_ruleMaps[rule.type()] = rule
                 return
             elif token == "rate":
-                type_def.rate = self._toUint(self.nextToken())
+                rule_type.rate = self._toUint(self.nextToken())
             elif token == "randomTiles":
-                type_def.randomTiles = self._toBool(self.nextToken())
+                rule_type.randomTiles = self._toBool(self.nextToken())
             elif token == "randomTilesPercent":
-                type_def.randomTiles = True
-                type_def.randomTilesPercent = self._toUint(self.nextToken())
+                rule_type.randomTiles = True
+                rule_type.randomTilesPercent = self._toUint(self.nextToken())
             else:
-                type_def.commands.append(self.parseCommand(token))
+                rule_type.commands.append(self.parseCommand(token))
 
     def parseRuleUnit(self) -> None:
-        """
-        Parse a unit rule definition.
-
-        Raises:
-            RuntimeError: If the rule definition has invalid syntax
-        """
+        """Parse a unit rule definition."""
         name = self.nextToken()
-        type_def = RuleUnitType(name=name)
+        rule_type = RuleUnitType(name)
 
         while True:
             token = self.nextToken()
             if token == "end":
-                rule = RuleUnit(type_def)
+                rule = RuleUnit(rule_type)
                 self.m_ruleUnits[rule.type()] = rule
                 return
             elif token == "rate":
-                type_def.rate = self._toUint(self.nextToken())
+                rule_type.rate = self._toUint(self.nextToken())
             # TODO: Handle onFail
             # elif token == "onFail":
-            #    pass
+            #     rule_type.onFail = ...
             else:
-                type_def.commands.append(self.parseCommand(token))
+                rule_type.commands.append(self.parseCommand(token))
 
     def parseCommand(self, token: str) -> IRuleCommand:
-        """
-        Parse a command definition.
-
-        Args:
-            token: The first token of the command
-
-        Returns:
-            The parsed command object
-
-        Raises:
-            RuntimeError: If the command has invalid syntax
-        """
+        """Parse a command definition."""
         target = None
         command = None
 
@@ -464,11 +381,11 @@ class Script:
                     self.parseResourcesArray(resources)
                     break
                 else:
-                    raise RuntimeError(f"Expected 'to' or 'add', got '{cmd}'")
+                    raise RuntimeError("parseCommand()")
 
             command = RuleCommandAgent(self.getAgentType(name), search_target, resources)
         else:
-            raise RuntimeError(f"Unknown command type: {token}")
+            raise RuntimeError("parseCommand()")
 
         if target is not None:
             cmd = self.nextToken()
@@ -483,17 +400,12 @@ class Script:
             elif cmd == "equals":
                 command = RuleCommandTest(target, Comparison.EQUALS, self._toUint(self.nextToken()))
             else:
-                raise RuntimeError(f"Unknown command action: {cmd}")
+                raise RuntimeError("parseCommand()")
 
         return command
 
     def parseMaps(self) -> None:
-        """
-        Parse the maps section of the script.
-
-        Raises:
-            RuntimeError: If the section has invalid syntax
-        """
+        """Parse the maps section."""
         while True:
             token = self.nextToken()
             if token == "end":
@@ -501,17 +413,12 @@ class Script:
             elif token == "map":
                 self.parseMap()
             else:
-                raise RuntimeError(f"Expected 'end' or 'map', got '{token}'")
+                raise RuntimeError("parseMaps()")
 
     def parseMap(self) -> None:
-        """
-        Parse a map definition.
-
-        Raises:
-            RuntimeError: If the map definition has invalid syntax
-        """
+        """Parse a map definition."""
         name = self.nextToken()
-        map_type = MapType(name=name)
+        map_type = MapType(name)
         self.m_mapTypes[map_type.name] = map_type
 
         while True:
@@ -523,16 +430,9 @@ class Script:
             elif token == "rules":
                 self.parseRuleMapArray(map_type.rules)
                 return
-            else:
-                raise RuntimeError(f"Expected 'color', 'capacity', or 'rules', got '{token}'")
 
     def parseUnits(self) -> None:
-        """
-        Parse the units section of the script.
-
-        Raises:
-            RuntimeError: If the section has invalid syntax
-        """
+        """Parse the units section."""
         while True:
             token = self.nextToken()
             if token == "end":
@@ -540,17 +440,12 @@ class Script:
             elif token == "unit":
                 self.parseUnit()
             else:
-                raise RuntimeError(f"Expected 'end' or 'unit', got '{token}'")
+                raise RuntimeError("parseUnits()")
 
     def parseUnit(self) -> None:
-        """
-        Parse a unit definition.
-
-        Raises:
-            RuntimeError: If the unit definition has invalid syntax
-        """
+        """Parse a unit definition."""
         name = self.nextToken()
-        unit = UnitType(name=name, resources=Resources())
+        unit = UnitType(name)
         self.m_unitTypes[unit.name] = unit
 
         caps = Resources()
@@ -574,21 +469,13 @@ class Script:
                 unit.resources.addResources(resources)
                 return
             else:
-                raise RuntimeError(f"Unexpected token in unit definition: {token}")
+                raise RuntimeError("parseUnit()")
 
     def parseStringArray(self, vec: List[str]) -> None:
-        """
-        Parse an array of strings.
-
-        Args:
-            vec: List to populate with strings
-
-        Raises:
-            RuntimeError: If the array has invalid syntax
-        """
+        """Parse an array of strings."""
         token = self.nextToken()
         if token != "[":
-            raise RuntimeError("Expected '['")
+            raise RuntimeError("parseStringArray()")
 
         while True:
             token = self.nextToken()
@@ -597,18 +484,10 @@ class Script:
             vec.append(token)
 
     def parseRuleMapArray(self, rules: List[RuleMap]) -> None:
-        """
-        Parse an array of map rule references.
-
-        Args:
-            rules: List to populate with rule references
-
-        Raises:
-            RuntimeError: If the array has invalid syntax
-        """
+        """Parse an array of map rule references."""
         token = self.nextToken()
         if token != "[":
-            raise RuntimeError("Expected '['")
+            raise RuntimeError("parseRuleMapArray()")
 
         while True:
             token = self.nextToken()
@@ -617,18 +496,10 @@ class Script:
             rules.append(self.m_ruleMaps[token])
 
     def parseRuleUnitArray(self, rules: List[RuleUnit]) -> None:
-        """
-        Parse an array of unit rule references.
-
-        Args:
-            rules: List to populate with rule references
-
-        Raises:
-            RuntimeError: If the array has invalid syntax
-        """
+        """Parse an array of unit rule references."""
         token = self.nextToken()
         if token != "[":
-            raise RuntimeError("Expected '['")
+            raise RuntimeError("parseRuleUnitArray()")
 
         while True:
             token = self.nextToken()
@@ -636,148 +507,84 @@ class Script:
                 return
             rules.append(self.m_ruleUnits[token])
 
-    # Accessor methods
+    # Accessor methods with template-like behavior
 
     def getResource(self, id: str) -> Resource:
-        """
-        Get a resource type by name.
-
-        Args:
-            id: Resource type name
-
-        Returns:
-            The resource type
-
-        Raises:
-            KeyError: If the resource is not found
-        """
-        return self.m_resources[id]
+        """Get a resource by identifier. Equivalent to C++ getT<Resource>()."""
+        try:
+            return self.m_resources[id]
+        except KeyError:
+            raise KeyError(f"Resource '{id}' not found")
 
     def getPathType(self, id: str) -> PathType:
-        """
-        Get a path type by name.
-
-        Args:
-            id: Path type name
-
-        Returns:
-            The path type
-
-        Raises:
-            KeyError: If the path type is not found
-        """
-        return self.m_pathTypes[id]
+        """Get a path type by identifier."""
+        try:
+            return self.m_pathTypes[id]
+        except KeyError:
+            raise KeyError(f"PathType '{id}' not found")
 
     def getWayType(self, id: str) -> WayType:
-        """
-        Get a way/segment type by name.
-
-        Args:
-            id: Way type name
-
-        Returns:
-            The way type
-
-        Raises:
-            KeyError: If the way type is not found
-        """
-        return self.m_segmentTypes[id]
+        """Get a way type by identifier."""
+        try:
+            return self.m_segmentTypes[id]
+        except KeyError:
+            raise KeyError(f"WayType '{id}' not found")
 
     def getAgentType(self, id: str) -> AgentType:
-        """
-        Get an agent type by name.
-
-        Args:
-            id: Agent type name
-
-        Returns:
-            The agent type
-
-        Raises:
-            KeyError: If the agent type is not found
-        """
-        return self.m_agentTypes[id]
+        """Get an agent type by identifier."""
+        try:
+            return self.m_agentTypes[id]
+        except KeyError:
+            raise KeyError(f"AgentType '{id}' not found")
 
     def getRuleMap(self, id: str) -> RuleMap:
-        """
-        Get a map rule by name.
-
-        Args:
-            id: Map rule name
-
-        Returns:
-            The map rule
-
-        Raises:
-            KeyError: If the map rule is not found
-        """
-        return self.m_ruleMaps[id]
+        """Get a map rule by identifier."""
+        try:
+            return self.m_ruleMaps[id]
+        except KeyError:
+            raise KeyError(f"RuleMap '{id}' not found")
 
     def getRuleUnit(self, id: str) -> RuleUnit:
-        """
-        Get a unit rule by name.
-
-        Args:
-            id: Unit rule name
-
-        Returns:
-            The unit rule
-
-        Raises:
-            KeyError: If the unit rule is not found
-        """
-        return self.m_ruleUnits[id]
+        """Get a unit rule by identifier."""
+        try:
+            return self.m_ruleUnits[id]
+        except KeyError:
+            raise KeyError(f"RuleUnit '{id}' not found")
 
     def getUnitType(self, id: str) -> UnitType:
-        """
-        Get a unit type by name.
-
-        Args:
-            id: Unit type name
-
-        Returns:
-            The unit type
-
-        Raises:
-            KeyError: If the unit type is not found
-        """
-        return self.m_unitTypes[id]
+        """Get a unit type by identifier."""
+        try:
+            return self.m_unitTypes[id]
+        except KeyError:
+            raise KeyError(f"UnitType '{id}' not found")
 
     def getMapType(self, id: str) -> MapType:
-        """
-        Get a map type by name.
+        """Get a map type by identifier."""
+        try:
+            return self.m_mapTypes[id]
+        except KeyError:
+            raise KeyError(f"MapType '{id}' not found")
 
-        Args:
-            id: Map type name
-
-        Returns:
-            The map type
-
-        Raises:
-            KeyError: If the map type is not found
-        """
-        return self.m_mapTypes[id]
-
-    # Utility methods for type conversion
+    # Utility methods for type conversion (equivalent to C++ static functions)
 
     @staticmethod
     def _toUint(word: str) -> int:
-        """Convert string to unsigned integer."""
+        """Convert string to unsigned integer. Equivalent to C++ toUint()."""
         return int(word)
 
     @staticmethod
     def _toColor(word: str) -> int:
-        """Convert hex string to color integer."""
+        """Convert hex string to color integer. Equivalent to C++ toColor()."""
         return int(word, 16)
 
     @staticmethod
     def _toFloat(word: str) -> float:
-        """Convert string to float."""
+        """Convert string to float. Equivalent to C++ toFloat()."""
         return float(word)
 
     @staticmethod
     def _toBool(word: str) -> bool:
-        """Convert string to boolean."""
+        """Convert string to boolean. Equivalent to C++ toBool()."""
         if word == "true":
             return True
         if word == "false":
