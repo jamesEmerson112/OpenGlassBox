@@ -4,6 +4,12 @@ Based on the analysis of the current codebase, here are the next components that
 
 ## Pending Components
 
+HIGHEST PRIORITY CHALLENGE:
+"one second. I feel like we may have run into this errors whereas when triggering tests to triggering all of the tests inside tests/, we run into import problem where <resource> has to be turned into `.<resource>`, but if we demo programs from demo/, `.<resource` cannot be read so it has to be converted back to <resource>. investigate that problem for me"
+
+SECOND HIGHEST PRIORITY CHALLENGE:
+python/demo is not working as demo/ from .cpp version. please investigate
+
 1. **Rule and RuleCommand**
    - Rule.cpp → rule.py (partial implementation exists)
    - RuleCommand.cpp → rule_command.py (partial implementation exists)
@@ -36,6 +42,13 @@ Based on the analysis of the current codebase, here are the next components that
    - test_dijkstra.py
 
 2. Modified test structure to use relative imports correctly
+
+3. **Project Structure Reorganization**
+   - Implemented proper package structure with src/ directory
+   - Created centralized imports in src/__init__.py to expose all classes
+   - Updated demo code to use the src package structure
+   - Fixed import conflicts between test modules and demo applications
+   - Ensures consistent importing regardless of execution context
 
 ## Future Work
 

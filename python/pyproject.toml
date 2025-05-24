@@ -63,9 +63,9 @@ performance = [
 "Documentation" = "https://openglassbox.readthedocs.io/"
 
 [project.scripts]
-openglassbox-demo = "openglassbox.demo:main"
-openglassbox-demo-enhanced = "openglassbox.demo_enhanced:main"
-openglassbox-run-demo = "openglassbox.run_demo:main"
+openglassbox-demo = "openglassbox.demo.src.main:main"
+openglassbox-demo-enhanced = "openglassbox.demo.src.demo_enhanced:main"
+openglassbox-run-demo = "openglassbox.demo.src.run_demo:main"
 
 [tool.setuptools]
 package-dir = {"" = "."}

@@ -7,7 +7,7 @@ finding, adding, removing, and transferring resources between containers.
 """
 
 from typing import List, Optional, Dict, Any
-from resource import Resource
+from .resource import Resource
 
 
 class Resources:

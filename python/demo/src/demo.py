@@ -13,14 +13,21 @@ import pygame
 from typing import Dict, List, Optional, Tuple, Any, Set
 from dataclasses import dataclass, field
 
-from simulation import Simulation
-from city import City
-from map import Map
-from path import Path, Node, Way
-from unit import Unit
-from agent import Agent
-from script_parser import Script
-from vector import Vector3f
+import sys
+import os
+
+# Add the root python directory to the path if not already there
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
+# Import from the src package
+from src.simulation import Simulation
+from src.city import City
+from src.map import Map
+from src.path import Path, Node, Way
+from src.unit import Unit
+from src.agent import Agent
+from src.script_parser import Script
+from src.vector import Vector3f
 
 # Define colors
 WHITE = (255, 255, 255)
@@ -167,9 +174,9 @@ class GlassBoxDemo:
         self.setup_listeners()
 
         # Parse script types to get the definitions
-        from map import MapType
-        from path import PathType, WayType
-        from unit import UnitType
+        from src.map import MapType
+        from src.path import PathType, WayType
+        from src.unit import UnitType
 
         # Get types from script
         road_type = None
@@ -238,8 +245,8 @@ class GlassBoxDemo:
                     u4 = paris.add_unit_on_way(work_type, road, w3, 0.5)
 
                 # Add test agents for animation
-                from agent import AgentType
-                from resources import Resources
+                from src.agent import AgentType
+                from src.resources import Resources
 
                 # Create agent types
                 worker_type = AgentType("Worker", 0.5, 1.0, 0xFF0000)  # Red workers
