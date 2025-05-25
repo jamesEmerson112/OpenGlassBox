@@ -72,9 +72,9 @@ class Simulation(Script):
 
         # Static listener equivalent to C++ static Simulation::Listener listener
         static_listener = Simulation.Listener()
-        self.setListener(static_listener)
+        self.set_listener(static_listener)
 
-    def setListener(self, listener: 'Simulation.Listener') -> None:
+    def set_listener(self, listener: 'Simulation.Listener') -> None:
         """
         Set the listener for simulation events.
         Equivalent to C++ void setListener(Simulation::Listener& listener).
@@ -103,7 +103,7 @@ class Simulation(Script):
             for city in self.m_cities.values():
                 city.update()
 
-    def addCity(self, name: str, position: Vector3f) -> City:
+    def add_city(self, name: str, position: Vector3f) -> City:
         """
         Create a new City and replace the previous city if already exists.
         Equivalent to C++ City& addCity(std::string const& name, Vector3f position).
@@ -120,7 +120,7 @@ class Simulation(Script):
         self.m_listener.onCityAdded(city)
         return city
 
-    def getCity(self, name: str) -> City:
+    def get_city(self, name: str) -> City:
         """
         Get the City referred to by its name or throw an exception if the
         given name does not match any held cities.
@@ -140,7 +140,7 @@ class Simulation(Script):
         except KeyError:
             raise KeyError(f"City '{name}' not found")
 
-    def getCityConst(self, name: str) -> City:
+    def get_city_const(self, name: str) -> City:
         """
         Get the City referred to by its name or throw an exception if the
         given name does not match any held cities (const version).

@@ -245,7 +245,7 @@ class RuleMap(IRule):
         """
         return self.m_randomTiles
 
-    def isRandom(self) -> bool:
+    def is_random(self) -> bool:
         """
         C++ compatibility alias for is_random().
 

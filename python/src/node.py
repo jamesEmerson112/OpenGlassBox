@@ -42,7 +42,7 @@ class Node:
         self.m_ways: List[Any] = []  # List of connected Ways
         self.m_units: List[Any] = []  # List of attached Units
 
-    def addUnit(self, unit: Any) -> None:
+    def add_unit(self, unit: Any) -> None:
         """
         Attach a Unit to this node.
 
@@ -61,9 +61,9 @@ class Node:
         self.m_position += direction
         # Update magnitude of all connected ways
         for way in self.m_ways:
-            way.updateMagnitude()
+            way.update_magnitude()
 
-    def getWayToNode(self, other_node: 'Node') -> Optional[Any]:
+    def get_way_to_node(self, other_node: 'Node') -> Optional[Any]:
         """
         Find a way connecting this node to another specified node.
 
@@ -79,7 +79,7 @@ class Node:
                 return way
         return None
 
-    def hasWays(self) -> bool:
+    def has_ways(self) -> bool:
         """
         Check if this node has any ways connected to it.
 
@@ -88,7 +88,7 @@ class Node:
         """
         return len(self.m_ways) > 0
 
-    def getMapPosition(self, grid_size_u: int, grid_size_v: int) -> Tuple[int, int]:
+    def get_map_position(self, grid_size_u: int, grid_size_v: int) -> Tuple[int, int]:
         """
         Convert world position to map coordinates.
 

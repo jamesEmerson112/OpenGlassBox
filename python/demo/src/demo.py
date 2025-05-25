@@ -98,7 +98,7 @@ class GlassBoxDemo:
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("Arial", 16)
         self.running = True
-        self.paused = True
+        self.paused = False  # Start unpaused so simulation runs immediately
 
         # Simulation components
         self.simulation = Simulation(12, 12)  # Match C++ demo: 12x12 grid
@@ -150,155 +150,6 @@ class GlassBoxDemo:
 
         # Set simulation listener
         self.simulation.set_listener(SimulationListener(self))
-
-    def load_simulation(self, filename: str) -> bool:
-        """
-        Load a simulation from a script file and create cities like C++ demo.
-
-        Args:
-            filename: Path to the simulation script file
-
-        Returns:
-            True if loading succeeded, False otherwise
-        """
-        print(f"Loading simulation from {filename}...")
-        if not self.script_parser.parse(filename):
-            print(f"Failed to parse script {filename}")
-            return False
-
-        # Reset simulation
-        self.simulation = Simulation(12, 12)  # Match C++ demo
-        self.setup_listeners()
-
-        # Parse script types to get the definitions
-        from src.map import MapType
-        from src.path import PathType, WayType
-        from src.unit import UnitType
-
-        # Get types from script
-        road_type = None
-        dirt_type = None
-        home_type = None
-        work_type = None
-        grass_type = None
-        water_type = None
-
-        for name, path_type in self.script_parser.m_pathTypes.items():
-            if name == "Road":
-                road_type = PathType(path_type.name, path_type.color)
-
-        for name, segment_type in self.script_parser.m_segmentTypes.items():
-            if name == "Dirt":
-                dirt_type = WayType(segment_type.name, segment_type.color)
-
-        for name, unit_type in self.script_parser.m_unitTypes.items():
-            if name == "Home":
-                home_type = UnitType(unit_type.name, unit_type.color)
-            elif name == "Work":
-                work_type = UnitType(unit_type.name, unit_type.color)
-
-        for name, map_type in self.script_parser.m_mapTypes.items():
-            if name == "Grass":
-                grass_type = MapType(map_type.name, map_type.color, map_type.capacity)
-            elif name == "Water":
-                water_type = MapType(map_type.name, map_type.color, map_type.capacity)
-
-        # Create Paris city (matches C++ demo exactly)
-        paris = self.simulation.add_city("Paris", Vector3f(400.0, 200.0, 0.0))
-
-        # Add maps to Paris
-        if grass_type:
-            paris_grass = paris.add_map(grass_type)
-            # Add some grass resources
-            for u in range(0, 12, 2):
-                for v in range(0, 12, 2):
-                    paris_grass.set_resource(u, v, 8)
-
-        if water_type:
-            paris_water = paris.add_map(water_type)
-            # Add some water resources
-            for u in range(1, 12, 3):
-                for v in range(1, 12, 3):
-                    paris_water.set_resource(u, v, 50)
-
-        # Add road and nodes to Paris
-        if road_type:
-            road = paris.add_path(road_type)
-            n1 = road.addNode(Vector3f(60.0, 60.0, 0.0) + paris.position())
-            n2 = road.addNode(Vector3f(300.0, 300.0, 0.0) + paris.position())
-            n3 = road.addNode(Vector3f(60.0, 300.0, 0.0) + paris.position())
-
-            if dirt_type:
-                w1 = road.addWay(dirt_type, n1, n2)
-                w2 = road.addWay(dirt_type, n2, n3)
-                w3 = road.addWay(dirt_type, n3, n1)
-
-                # Add units to Paris
-                if home_type:
-                    u1 = paris.add_unit_on_way(home_type, road, w1, 0.66)
-                    u2 = paris.add_unit_on_way(home_type, road, w1, 0.5)
-                if work_type:
-                    u3 = paris.add_unit_on_way(work_type, road, w2, 0.5)
-                    u4 = paris.add_unit_on_way(work_type, road, w3, 0.5)
-
-                # Add test agents for animation
-                from src.agent import AgentType
-                from src.resources import Resources
-
-                # Create agent types
-                worker_type = AgentType("Worker", 0.5, 1.0, 0xFF0000)  # Red workers
-                shopper_type = AgentType("Shopper", 0.3, 1.0, 0x00FF00)  # Green shoppers
-
-                # Add some test agents
-                resources = Resources()
-                resources.addResource("food", 10)
-
-                # Add agents going from homes to work
-                paris.add_agent(worker_type, u1, resources, "Work")
-                paris.add_agent(worker_type, u2, resources, "Work")
-
-                # Add agents going from work to homes
-                resources2 = Resources()
-                resources2.addResource("goods", 5)
-                paris.add_agent(shopper_type, u3, resources2, "Home")
-
-        # Create Versailles city (matches C++ demo exactly)
-        versailles = self.simulation.add_city("Versailles", Vector3f(0.0, 30.0, 0.0))
-
-        # Add maps to Versailles
-        if grass_type:
-            vers_grass = versailles.add_map(grass_type)
-            # Add some grass resources
-            for u in range(0, 12, 3):
-                for v in range(0, 12, 3):
-                    vers_grass.set_resource(u, v, 6)
-
-        if water_type:
-            vers_water = versailles.add_map(water_type)
-            # Add some water resources
-            for u in range(2, 12, 4):
-                for v in range(2, 12, 4):
-                    vers_water.set_resource(u, v, 40)
-
-        # Add road and nodes to Versailles
-        if road_type:
-            road2 = versailles.add_path(road_type)
-            n4 = road2.addNode(Vector3f(40.0, 20.0, 0.0) + versailles.position())
-            n5 = road2.addNode(Vector3f(300.0, 300.0, 0.0) + versailles.position())
-
-            if dirt_type:
-                w4 = road2.addWay(dirt_type, n4, n5)
-                # Connect to Paris (n1 from Paris)
-                if road_type and dirt_type:
-                    w5 = road2.addWay(dirt_type, n5, n1)  # Connect to Paris
-
-                # Add units to Versailles
-                if home_type and work_type:
-                    u5 = versailles.add_unit_on_way(home_type, road, w5, 0.1)
-                    u6 = versailles.add_unit_on_way(work_type, road2, w4, 0.9)
-
-        print("Simulation loaded successfully")
-        return True
 
     def world_to_screen(self, world_x: float, world_y: float) -> Tuple[int, int]:
         """
@@ -573,7 +424,7 @@ class GlassBoxDemo:
             dt: Time delta in seconds
         """
         if not self.paused:
-            self.simulation.update()
+            self.simulation.update(dt)
 
     def render(self):
         """Render the current simulation state."""
@@ -617,39 +468,19 @@ class GlassBoxDemo:
         from src.path import PathType, WayType
         from src.unit import UnitType
         from src.agent import AgentType
-        from src.rule import Rule
-        from src.rule_command import RuleCommandAgent
         from src.resources import Resources
 
-        # Create agent types (for dynamic spawning)
-        people_agent_type = AgentType("People", 50.0, 1.0, 0xFFFF00)  # Yellow people
-        worker_agent_type = AgentType("Worker", 30.0, 1.0, 0x00FFFF)  # Cyan workers
-
-        # Create resources for agents to carry
-        food_resources = Resources()
-        food_resources.addResource("food", 5)
-
-        goods_resources = Resources()
-        goods_resources.addResource("goods", 3)
-
-        # Create rules with agent spawning commands
-        people_spawner_rule = Rule("PeopleSpawner", 50, [
-            RuleCommandAgent(people_agent_type, "Work", food_resources)
-        ])
-
-        worker_spawner_rule = Rule("WorkerSpawner", 30, [
-            RuleCommandAgent(worker_agent_type, "Home", goods_resources)
-        ])
-
-        # Create basic types (matching C++ demo) with rules
+        # Create basic types (matching C++ demo)
         grass_type = MapType("Grass", 0x00FF00, 100)
         water_type = MapType("Water", 0x0000FF, 100)
         road_type = PathType("Road", 0x888888)
         dirt_type = WayType("Dirt", 0x8B4513)
+        home_type = UnitType("Home", color=0xFF0000, radius=1, targets=["People", "Worker"])
+        work_type = UnitType("Work", color=0x0000FF, radius=1, targets=["People", "Worker"])
 
-        # Create unit types with rules for agent spawning
-        home_type = UnitType("Home", 0xFF0000, 1, Resources(), [people_spawner_rule], ["People"])
-        work_type = UnitType("Work", 0x0000FF, 1, Resources(), [worker_spawner_rule], ["Worker"])
+        # Create agent types for testing
+        people_agent_type = AgentType("People", 50.0, 1.0, 0xFFFF00)  # Yellow people
+        worker_agent_type = AgentType("Worker", 30.0, 1.0, 0x00FFFF)  # Cyan workers
 
         # Create Paris city (matches C++ demo exactly)
         print("Creating Paris...")
@@ -672,14 +503,14 @@ class GlassBoxDemo:
         # Add road and nodes to Paris
         print("Adding paths to Paris...")
         road = paris.add_path(road_type)
-        n1 = road.addNode(Vector3f(60.0, 60.0, 0.0) + paris.position())
-        n2 = road.addNode(Vector3f(300.0, 300.0, 0.0) + paris.position())
-        n3 = road.addNode(Vector3f(60.0, 300.0, 0.0) + paris.position())
+        n1 = road.add_node(Vector3f(60.0, 60.0, 0.0) + paris.position())
+        n2 = road.add_node(Vector3f(300.0, 300.0, 0.0) + paris.position())
+        n3 = road.add_node(Vector3f(60.0, 300.0, 0.0) + paris.position())
 
         # Add ways between nodes
-        w1 = road.addWay(dirt_type, n1, n2)
-        w2 = road.addWay(dirt_type, n2, n3)
-        w3 = road.addWay(dirt_type, n3, n1)
+        w1 = road.add_way(dirt_type, n1, n2)
+        w2 = road.add_way(dirt_type, n2, n3)
+        w3 = road.add_way(dirt_type, n3, n1)
 
         # Add units to Paris
         print("Adding units to Paris...")
@@ -687,6 +518,14 @@ class GlassBoxDemo:
         u2 = paris.add_unit_on_way(home_type, road, w1, 0.5)
         u3 = paris.add_unit_on_way(work_type, road, w2, 0.5)
         u4 = paris.add_unit_on_way(work_type, road, w3, 0.5)
+
+        # Add some test agents to see animation
+        print("Adding test agents to Paris...")
+        test_resources = Resources()
+        test_resources.add_resource("food", 5)
+
+        test_agent = paris.add_agent(people_agent_type, u1, test_resources, "Work")
+        test_agent2 = paris.add_agent(worker_agent_type, u3, test_resources, "Home")
 
         # Create Versailles city (matches C++ demo exactly)
         print("Creating Versailles...")
@@ -709,12 +548,12 @@ class GlassBoxDemo:
         # Add road and nodes to Versailles
         print("Adding paths to Versailles...")
         road2 = versailles.add_path(road_type)
-        n4 = road2.addNode(Vector3f(40.0, 20.0, 0.0) + versailles.position())
-        n5 = road2.addNode(Vector3f(300.0, 300.0, 0.0) + versailles.position())
+        n4 = road2.add_node(Vector3f(40.0, 20.0, 0.0) + versailles.position())
+        n5 = road2.add_node(Vector3f(300.0, 300.0, 0.0) + versailles.position())
 
         # Add ways
-        w4 = road2.addWay(dirt_type, n4, n5)
-        w5 = road2.addWay(dirt_type, n5, n1)  # Connect to Paris
+        w4 = road2.add_way(dirt_type, n4, n5)
+        w5 = road2.add_way(dirt_type, n5, n1)  # Connect to Paris
 
         # Add units to Versailles
         print("Adding units to Versailles...")
@@ -755,55 +594,6 @@ def main():
     """Main entry point for the demo application."""
     # Initialize demo
     demo = GlassBoxDemo(1024, 768, "OpenGlassBox Simulation")
-
-    # Load test simulation if available
-    # Try different possible locations for the simulation file
-    possible_paths = [
-        os.path.join("data", "simulations", "TestCity.txt"),  # Python-specific path when running from python/ directory
-        os.path.join("python", "data", "simulations", "TestCity.txt"),  # Python-specific path when running from project root
-        os.path.join("demo", "data", "Simulations", "TestCity.txt"),  # C++ path when running from project root
-        os.path.join("..", "demo", "data", "Simulations", "TestCity.txt")  # C++ path when running from python/ directory
-    ]
-
-    sim_path = None
-    for path in possible_paths:
-        if os.path.exists(path):
-            sim_path = path
-            break
-
-    if sim_path:
-        demo.load_simulation(sim_path)
-    else:
-        print(f"Warning: Could not find simulation file")
-
-        # Create a simple test city if no simulation file
-        from city import City
-        from map import MapType
-        from path import PathType, WayType
-        from unit import UnitType
-        from vector import Vector3f
-
-        city = City("TestCity")
-        demo.simulation.add_city(city, Vector3f(0, 0, 0))
-
-        # Add a map
-        water_map = city.add_map(MapType("Water", 0x0000FF, 100))
-
-        # Add a path with nodes and ways
-        road = city.add_path(PathType("Road", 0x555555))
-        node1 = road.addNode(Vector3f(-50.0, -50.0, 0.0))
-        node2 = road.addNode(Vector3f(50.0, -50.0, 0.0))
-        node3 = road.addNode(Vector3f(50.0, 50.0, 0.0))
-        node4 = road.addNode(Vector3f(-50.0, 50.0, 0.0))
-
-        road.addWay(WayType("Dirt", 0x8B4513), node1, node2)
-        road.addWay(WayType("Dirt", 0x8B4513), node2, node3)
-        road.addWay(WayType("Dirt", 0x8B4513), node3, node4)
-        road.addWay(WayType("Dirt", 0x8B4513), node4, node1)
-
-        # Add a unit
-        # Create a unit at a node (not on a way)
-        city.add_unit(UnitType("House", 0xFF0000), node1)
 
     # Run the demo
     demo.run()

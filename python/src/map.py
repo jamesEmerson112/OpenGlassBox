@@ -43,8 +43,8 @@ class Map:
         """
         self.m_type = map_type
         self.m_position = city.position()
-        self.m_gridSizeU = city.gridSizeU()
-        self.m_gridSizeV = city.gridSizeV()
+        self.m_gridSizeU = city.grid_size_u()
+        self.m_gridSizeV = city.grid_size_v()
 
         # Initialize resources with zero in each cell
         self.m_resources = [0] * (self.m_gridSizeU * self.m_gridSizeV)

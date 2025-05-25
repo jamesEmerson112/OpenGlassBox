@@ -233,14 +233,14 @@ class GlassBoxDemo:
         # Add road and nodes to Paris
         if road_type:
             road = paris.add_path(road_type)
-            n1 = road.addNode(Vector3f(60.0, 60.0, 0.0) + paris.position())
-            n2 = road.addNode(Vector3f(300.0, 300.0, 0.0) + paris.position())
-            n3 = road.addNode(Vector3f(60.0, 300.0, 0.0) + paris.position())
+            n1 = road.add_node(Vector3f(60.0, 60.0, 0.0) + paris.position())
+            n2 = road.add_node(Vector3f(300.0, 300.0, 0.0) + paris.position())
+            n3 = road.add_node(Vector3f(60.0, 300.0, 0.0) + paris.position())
 
             if dirt_type:
-                w1 = road.addWay(dirt_type, n1, n2)
-                w2 = road.addWay(dirt_type, n2, n3)
-                w3 = road.addWay(dirt_type, n3, n1)
+                w1 = road.add_way(dirt_type, n1, n2)
+                w2 = road.add_way(dirt_type, n2, n3)
+                w3 = road.add_way(dirt_type, n3, n1)
 
                 # Add units to Paris
                 if home_type:
@@ -272,14 +272,14 @@ class GlassBoxDemo:
         # Add road and nodes to Versailles
         if road_type:
             road2 = versailles.add_path(road_type)
-            n4 = road2.addNode(Vector3f(40.0, 20.0, 0.0) + versailles.position())
-            n5 = road2.addNode(Vector3f(300.0, 300.0, 0.0) + versailles.position())
+            n4 = road2.add_node(Vector3f(40.0, 20.0, 0.0) + versailles.position())
+            n5 = road2.add_node(Vector3f(300.0, 300.0, 0.0) + versailles.position())
 
             if dirt_type:
-                w4 = road2.addWay(dirt_type, n4, n5)
+                w4 = road2.add_way(dirt_type, n4, n5)
                 # Connect to Paris (n1 from Paris)
                 if road_type and dirt_type:
-                    w5 = road2.addWay(dirt_type, n5, n1)  # Connect to Paris
+                    w5 = road2.add_way(dirt_type, n5, n1)  # Connect to Paris
 
                 # Add units to Versailles
                 if home_type and work_type:
@@ -653,15 +653,15 @@ def main():
 
         # Add a path with nodes and ways
         road = city.add_path(PathType("Road", 0x555555))
-        node1 = road.addNode(Vector3f(-50.0, -50.0, 0.0))
-        node2 = road.addNode(Vector3f(50.0, -50.0, 0.0))
-        node3 = road.addNode(Vector3f(50.0, 50.0, 0.0))
-        node4 = road.addNode(Vector3f(-50.0, 50.0, 0.0))
+        node1 = road.add_node(Vector3f(-50.0, -50.0, 0.0))
+        node2 = road.add_node(Vector3f(50.0, -50.0, 0.0))
+        node3 = road.add_node(Vector3f(50.0, 50.0, 0.0))
+        node4 = road.add_node(Vector3f(-50.0, 50.0, 0.0))
 
-        road.addWay(WayType("Dirt", 0x8B4513), node1, node2)
-        road.addWay(WayType("Dirt", 0x8B4513), node2, node3)
-        road.addWay(WayType("Dirt", 0x8B4513), node3, node4)
-        road.addWay(WayType("Dirt", 0x8B4513), node4, node1)
+        road.add_way(WayType("Dirt", 0x8B4513), node1, node2)
+        road.add_way(WayType("Dirt", 0x8B4513), node2, node3)
+        road.add_way(WayType("Dirt", 0x8B4513), node3, node4)
+        road.add_way(WayType("Dirt", 0x8B4513), node4, node1)
 
         # Add a unit
         city.add_unit(UnitType("House", 0xFF0000), node1)

@@ -66,7 +66,7 @@ class Resource:
         else:
             self.m_amount = 0
 
-    def transferTo(self, target: 'Resource') -> None:
+    def transfer_to(self, target: 'Resource') -> None:
         """
         Transfer resources to a given recipient. The quantity of
         resources transferred is limited by the capacity of the recipient.
@@ -78,7 +78,7 @@ class Resource:
         self.remove(to_transfer)
         target.add(to_transfer)
 
-    def setCapacity(self, capacity: int) -> None:
+    def set_capacity(self, capacity: int) -> None:
         """
         Modify the capacity of the resource.
         If the new capacity is less than the current amount,
@@ -100,7 +100,7 @@ class Resource:
         """
         return self.m_type
 
-    def getCapacity(self) -> int:
+    def get_capacity(self) -> int:
         """
         Return how many resources can be held.
 
@@ -109,7 +109,7 @@ class Resource:
         """
         return self.m_capacity
 
-    def getAmount(self) -> int:
+    def get_amount(self) -> int:
         """
         Return the current quantity of resource.
 
@@ -118,7 +118,7 @@ class Resource:
         """
         return self.m_amount
 
-    def hasAmount(self) -> bool:
+    def has_amount(self) -> bool:
         """
         Check if the current quantity is not zero.
 

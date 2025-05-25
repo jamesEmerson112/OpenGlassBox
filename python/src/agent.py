@@ -150,7 +150,7 @@ class Agent:
 
         self.m_nextNode = dijkstra.find_next_point(self.m_lastNode, self.m_searchTarget, self.m_resources)
         if self.m_nextNode is not None:
-            self.m_currentWay = self.m_lastNode.getWayToNode(self.m_nextNode)
+            self.m_currentWay = self.m_lastNode.get_way_to_node(self.m_nextNode)
             if self.m_currentWay is not None:
                 if self.m_lastNode is self.m_currentWay.from_():
                     self.m_offset = 0.0

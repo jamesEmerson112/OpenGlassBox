@@ -236,7 +236,7 @@ class RuleCommandAgent(IRuleCommand):
         Args:
             context: The rule execution context
         """
-        if context.unit is not None and hasattr(context.unit, 'hasWays') and context.unit.hasWays():
+        if context.unit is not None and hasattr(context.unit, 'hasWays') and context.unit.has_ways():
             # Add agent to the city
             if context.city is not None and hasattr(context.city, 'addAgent'):
                 context.city.addAgent(self, context.unit, self.m_resources, self.m_target)

@@ -103,7 +103,7 @@ class Script:
             return self.m_success
 
         try:
-            self.parseScript()
+            self.parse_script()
             self.m_success = True
             print("  done")
         except Exception as e:
@@ -116,7 +116,7 @@ class Script:
 
         return self.m_success
 
-    def nextToken(self) -> str:
+    def next_token(self) -> str:
         """
         Split the script file into tokens. Return the reference of the last token.
         Equivalent to C++ Script::nextToken().
@@ -147,29 +147,29 @@ class Script:
 
         return self.m_token
 
-    def parseScript(self) -> None:
+    def parse_script(self) -> None:
         """
         Entry point method for parsing the script.
         Equivalent to C++ Script::parseScript().
         """
         while True:
             empty = (len(self.m_token) == 0)
-            token = self.nextToken()
+            token = self.next_token()
 
             if token == "resources":
-                self.parseResources()
+                self.parse_resources()
             elif token == "rules":
-                self.parseRules()
+                self.parse_rules()
             elif token == "maps":
-                self.parseMaps()
+                self.parse_maps()
             elif token == "paths":
-                self.parsePaths()
+                self.parse_paths()
             elif token == "segments":
-                self.parseWays()
+                self.parse_ways()
             elif token == "agents":
-                self.parseAgents()
+                self.parse_agents()
             elif token == "units":
-                self.parseUnits()
+                self.parse_units()
             elif token == "":
                 if not empty:
                     return
@@ -178,273 +178,273 @@ class Script:
             else:
                 raise RuntimeError("parseScript()")
 
-    def parseResources(self) -> None:
+    def parse_resources(self) -> None:
         """Parse the resources section."""
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "end":
                 return
             elif token == "resource":
-                self.parseResource()
+                self.parse_resource()
             else:
                 raise RuntimeError("parseResources()")
 
-    def parseResource(self) -> None:
+    def parse_resource(self) -> None:
         """Parse a single resource definition."""
-        name = self.nextToken()
+        name = self.next_token()
         self.m_resources[name] = Resource(name)
 
-    def parseResourcesArray(self, resources: Resources) -> None:
+    def parse_resources_array(self, resources: Resources) -> None:
         """Parse an array of resource definitions."""
-        token = self.nextToken()
+        token = self.next_token()
         if token != "[":
             raise RuntimeError("parseResourcesArray()")
 
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "]":
                 return
 
-            resource = self.getResource(token)
-            amount = self._toUint(self.nextToken())
+            resource = self.get_resource(token)
+            amount = self._toUint(self.next_token())
             # FIXME should be setAmount
-            resources.addResource(resource.type(), amount)
+            resources.add_resource(resource.type(), amount)
 
-    def parseCapacitiesArray(self, resources: Resources) -> None:
+    def parse_capacities_array(self, resources: Resources) -> None:
         """Parse an array of capacity definitions."""
-        token = self.nextToken()
+        token = self.next_token()
         if token != "[":
             raise RuntimeError("parseCapacitiesArray()")
 
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "]":
                 return
 
-            resource = self.getResource(token)
-            capacity = self._toUint(self.nextToken())
-            resources.setCapacity(resource.type(), capacity)
+            resource = self.get_resource(token)
+            capacity = self._toUint(self.next_token())
+            resources.set_capacity(resource.type(), capacity)
 
-    def parsePaths(self) -> None:
+    def parse_paths(self) -> None:
         """Parse the paths section."""
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "end":
                 return
             elif token == "path":
-                self.parsePath()
+                self.parse_path()
             else:
                 raise RuntimeError("parsePaths()")
 
-    def parsePath(self) -> None:
+    def parse_path(self) -> None:
         """Parse a single path definition."""
-        name = self.nextToken()
+        name = self.next_token()
         path = PathType(name)
         self.m_pathTypes[path.name] = path
 
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "color":
-                path.color = self._toColor(self.nextToken())
+                path.color = self._toColor(self.next_token())
                 return
             else:
                 raise RuntimeError("parsePath()")
 
-    def parseWays(self) -> None:
+    def parse_ways(self) -> None:
         """Parse the ways/segments section."""
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "end":
                 return
             elif token == "segment":
-                self.parseWay()
+                self.parse_way()
             else:
                 raise RuntimeError("parseWays()")
 
-    def parseWay(self) -> None:
+    def parse_way(self) -> None:
         """Parse a single way/segment definition."""
-        name = self.nextToken()
+        name = self.next_token()
         seg = WayType(name)
         self.m_segmentTypes[seg.name] = seg
 
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "color":
-                seg.color = self._toColor(self.nextToken())
+                seg.color = self._toColor(self.next_token())
                 return
             else:
                 raise RuntimeError("parseWay()")
 
-    def parseAgents(self) -> None:
+    def parse_agents(self) -> None:
         """Parse the agents section."""
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "end":
                 return
             elif token == "agent":
-                self.parseAgent()
+                self.parse_agent()
             else:
                 raise RuntimeError("parseAgents()")
 
-    def parseAgent(self) -> None:
+    def parse_agent(self) -> None:
         """Parse a single agent definition."""
-        name = self.nextToken()
+        name = self.next_token()
         agent = AgentType(name=name, speed=0.0, radius=0, color=0)
         self.m_agentTypes[agent.name] = agent
 
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "color":
-                agent.color = self._toColor(self.nextToken())
+                agent.color = self._toColor(self.next_token())
             elif token == "speed":
-                agent.speed = self._toFloat(self.nextToken())
+                agent.speed = self._toFloat(self.next_token())
                 return
             else:
                 raise RuntimeError("parseAgents()")
 
-    def parseRules(self) -> None:
+    def parse_rules(self) -> None:
         """Parse the rules section."""
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "end":
                 return
             elif token == "mapRule":
-                self.parseRuleMap()
+                self.parse_rule_map()
             elif token == "unitRule":
-                self.parseRuleUnit()
+                self.parse_rule_unit()
             else:
                 raise RuntimeError("parseRules()")
 
-    def parseRuleMap(self) -> None:
+    def parse_rule_map(self) -> None:
         """Parse a map rule definition."""
-        name = self.nextToken()
+        name = self.next_token()
         rule_type = RuleMapType(name)
 
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "end":
                 rule = RuleMap(rule_type)
                 self.m_ruleMaps[rule.type()] = rule
                 return
             elif token == "rate":
-                rule_type.rate = self._toUint(self.nextToken())
+                rule_type.rate = self._toUint(self.next_token())
             elif token == "randomTiles":
-                rule_type.randomTiles = self._toBool(self.nextToken())
+                rule_type.randomTiles = self._toBool(self.next_token())
             elif token == "randomTilesPercent":
                 rule_type.randomTiles = True
-                rule_type.randomTilesPercent = self._toUint(self.nextToken())
+                rule_type.randomTilesPercent = self._toUint(self.next_token())
             else:
-                rule_type.commands.append(self.parseCommand(token))
+                rule_type.commands.append(self.parse_command(token))
 
-    def parseRuleUnit(self) -> None:
+    def parse_rule_unit(self) -> None:
         """Parse a unit rule definition."""
-        name = self.nextToken()
+        name = self.next_token()
         rule_type = RuleUnitType(name)
 
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "end":
                 rule = RuleUnit(rule_type)
                 self.m_ruleUnits[rule.type()] = rule
                 return
             elif token == "rate":
-                rule_type.rate = self._toUint(self.nextToken())
+                rule_type.rate = self._toUint(self.next_token())
             # TODO: Handle onFail
             # elif token == "onFail":
             #     rule_type.onFail = ...
             else:
-                rule_type.commands.append(self.parseCommand(token))
+                rule_type.commands.append(self.parse_command(token))
 
-    def parseCommand(self, token: str) -> IRuleCommand:
+    def parse_command(self, token: str) -> IRuleCommand:
         """Parse a command definition."""
         target = None
         command = None
 
         if token == "local":
-            resource = self.getResource(self.nextToken())
+            resource = self.get_resource(self.next_token())
             target = RuleValueLocal(resource)
         elif token == "global":
-            resource = self.getResource(self.nextToken())
+            resource = self.get_resource(self.next_token())
             target = RuleValueGlobal(resource)
         elif token == "map":
-            target = RuleValueMap(self.nextToken())
+            target = RuleValueMap(self.next_token())
         elif token == "agent":
-            name = self.nextToken()
+            name = self.next_token()
             search_target = ""
             resources = Resources()
 
             while True:
-                cmd = self.nextToken()
+                cmd = self.next_token()
                 if cmd == "to":
-                    search_target = self.nextToken()
+                    search_target = self.next_token()
                 elif cmd == "add":
-                    self.parseResourcesArray(resources)
+                    self.parse_resources_array(resources)
                     break
                 else:
                     raise RuntimeError("parseCommand()")
 
-            command = RuleCommandAgent(self.getAgentType(name), search_target, resources)
+            command = RuleCommandAgent(self.get_agent_type(name), search_target, resources)
         else:
             raise RuntimeError("parseCommand()")
 
         if target is not None:
-            cmd = self.nextToken()
+            cmd = self.next_token()
             if cmd == "add":
-                command = RuleCommandAdd(target, self._toUint(self.nextToken()))
+                command = RuleCommandAdd(target, self._toUint(self.next_token()))
             elif cmd == "remove":
-                command = RuleCommandRemove(target, self._toUint(self.nextToken()))
+                command = RuleCommandRemove(target, self._toUint(self.next_token()))
             elif cmd == "greater":
-                command = RuleCommandTest(target, Comparison.GREATER, self._toUint(self.nextToken()))
+                command = RuleCommandTest(target, Comparison.GREATER, self._toUint(self.next_token()))
             elif cmd == "less":
-                command = RuleCommandTest(target, Comparison.LESS, self._toUint(self.nextToken()))
+                command = RuleCommandTest(target, Comparison.LESS, self._toUint(self.next_token()))
             elif cmd == "equals":
-                command = RuleCommandTest(target, Comparison.EQUALS, self._toUint(self.nextToken()))
+                command = RuleCommandTest(target, Comparison.EQUALS, self._toUint(self.next_token()))
             else:
                 raise RuntimeError("parseCommand()")
 
         return command
 
-    def parseMaps(self) -> None:
+    def parse_maps(self) -> None:
         """Parse the maps section."""
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "end":
                 return
             elif token == "map":
-                self.parseMap()
+                self.parse_map()
             else:
                 raise RuntimeError("parseMaps()")
 
-    def parseMap(self) -> None:
+    def parse_map(self) -> None:
         """Parse a map definition."""
-        name = self.nextToken()
+        name = self.next_token()
         map_type = MapType(name)
         self.m_mapTypes[map_type.name] = map_type
 
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "color":
-                map_type.color = self._toColor(self.nextToken())
+                map_type.color = self._toColor(self.next_token())
             elif token == "capacity":
-                map_type.capacity = self._toUint(self.nextToken())
+                map_type.capacity = self._toUint(self.next_token())
             elif token == "rules":
-                self.parseRuleMapArray(map_type.rules)
+                self.parse_rule_map_array(map_type.rules)
                 return
 
-    def parseUnits(self) -> None:
+    def parse_units(self) -> None:
         """Parse the units section."""
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "end":
                 return
             elif token == "unit":
-                self.parseUnit()
+                self.parse_unit()
             else:
                 raise RuntimeError("parseUnits()")
 
-    def parseUnit(self) -> None:
+    def parse_unit(self) -> None:
         """Parse a unit definition."""
-        name = self.nextToken()
+        name = self.next_token()
         unit = UnitType(name)
         self.m_unitTypes[unit.name] = unit
 
@@ -452,113 +452,113 @@ class Script:
         resources = Resources()
 
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "color":
-                unit.color = self._toColor(self.nextToken())
+                unit.color = self._toColor(self.next_token())
             elif token == "mapRadius":
-                unit.radius = self._toUint(self.nextToken())
+                unit.radius = self._toUint(self.next_token())
             elif token == "rules":
-                self.parseRuleUnitArray(unit.rules)
+                self.parse_rule_unit_array(unit.rules)
             elif token == "targets":
-                self.parseStringArray(unit.targets)
+                self.parse_string_array(unit.targets)
             elif token == "caps":
-                self.parseCapacitiesArray(caps)
-                unit.resources.setCapacities(caps)
+                self.parse_capacities_array(caps)
+                unit.resources.set_capacities(caps)
             elif token == "resources":
-                self.parseResourcesArray(resources)
-                unit.resources.addResources(resources)
+                self.parse_resources_array(resources)
+                unit.resources.add_resources(resources)
                 return
             else:
                 raise RuntimeError("parseUnit()")
 
-    def parseStringArray(self, vec: List[str]) -> None:
+    def parse_string_array(self, vec: List[str]) -> None:
         """Parse an array of strings."""
-        token = self.nextToken()
+        token = self.next_token()
         if token != "[":
             raise RuntimeError("parseStringArray()")
 
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "]":
                 return
             vec.append(token)
 
-    def parseRuleMapArray(self, rules: List[RuleMap]) -> None:
+    def parse_rule_map_array(self, rules: List[RuleMap]) -> None:
         """Parse an array of map rule references."""
-        token = self.nextToken()
+        token = self.next_token()
         if token != "[":
             raise RuntimeError("parseRuleMapArray()")
 
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "]":
                 return
             rules.append(self.m_ruleMaps[token])
 
-    def parseRuleUnitArray(self, rules: List[RuleUnit]) -> None:
+    def parse_rule_unit_array(self, rules: List[RuleUnit]) -> None:
         """Parse an array of unit rule references."""
-        token = self.nextToken()
+        token = self.next_token()
         if token != "[":
             raise RuntimeError("parseRuleUnitArray()")
 
         while True:
-            token = self.nextToken()
+            token = self.next_token()
             if token == "]":
                 return
             rules.append(self.m_ruleUnits[token])
 
     # Accessor methods with template-like behavior
 
-    def getResource(self, id: str) -> Resource:
+    def get_resource(self, id: str) -> Resource:
         """Get a resource by identifier. Equivalent to C++ getT<Resource>()."""
         try:
             return self.m_resources[id]
         except KeyError:
             raise KeyError(f"Resource '{id}' not found")
 
-    def getPathType(self, id: str) -> PathType:
+    def get_path_type(self, id: str) -> PathType:
         """Get a path type by identifier."""
         try:
             return self.m_pathTypes[id]
         except KeyError:
             raise KeyError(f"PathType '{id}' not found")
 
-    def getWayType(self, id: str) -> WayType:
+    def get_way_type(self, id: str) -> WayType:
         """Get a way type by identifier."""
         try:
             return self.m_segmentTypes[id]
         except KeyError:
             raise KeyError(f"WayType '{id}' not found")
 
-    def getAgentType(self, id: str) -> AgentType:
+    def get_agent_type(self, id: str) -> AgentType:
         """Get an agent type by identifier."""
         try:
             return self.m_agentTypes[id]
         except KeyError:
             raise KeyError(f"AgentType '{id}' not found")
 
-    def getRuleMap(self, id: str) -> RuleMap:
+    def get_rule_map(self, id: str) -> RuleMap:
         """Get a map rule by identifier."""
         try:
             return self.m_ruleMaps[id]
         except KeyError:
             raise KeyError(f"RuleMap '{id}' not found")
 
-    def getRuleUnit(self, id: str) -> RuleUnit:
+    def get_rule_unit(self, id: str) -> RuleUnit:
         """Get a unit rule by identifier."""
         try:
             return self.m_ruleUnits[id]
         except KeyError:
             raise KeyError(f"RuleUnit '{id}' not found")
 
-    def getUnitType(self, id: str) -> UnitType:
+    def get_unit_type(self, id: str) -> UnitType:
         """Get a unit type by identifier."""
         try:
             return self.m_unitTypes[id]
         except KeyError:
             raise KeyError(f"UnitType '{id}' not found")
 
-    def getMapType(self, id: str) -> MapType:
+    def get_map_type(self, id: str) -> MapType:
         """Get a map type by identifier."""
         try:
             return self.m_mapTypes[id]

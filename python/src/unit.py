@@ -48,13 +48,13 @@ class Unit:
         # Unit produce resources as defined by simulation scripts
         # C++: m_resources(type.resources) - copy constructor
         self.m_resources = Resources()
-        self.m_resources.addResources(unit_type.resources)
+        self.m_resources.add_resources(unit_type.resources)
 
         # Discrete time for running UnitRules at the rate time defined by simulation scripts
         self.m_ticks = 0
 
         # Register the unit with the node
-        self.m_node.addUnit(self)
+        self.m_node.add_unit(self)
 
         # Structure holding useful information for the good execution of UnitRules
         self.m_context = RuleContext()
@@ -67,11 +67,13 @@ class Unit:
         self.m_context.radius = unit_type.radius
 
         # Convert world position to map coordinates
-        u_v_result = city.world2mapPosition(self.m_node.position())
-        self.m_context.u = u_v_result[0]
-        self.m_context.v = u_v_result[1]
+        u_out = []
+        v_out = []
+        city.world2mapPosition(self.m_node.position(), u_out, v_out)
+        self.m_context.u = u_out[0] if u_out else 0
+        self.m_context.v = v_out[0] if v_out else 0
 
-    def executeRules(self) -> None:
+    def execute_rules(self) -> None:
         """
         Execute simulation rules given by UnitType (defined by the simulation script).
         Equivalent to C++ void executeRules().
@@ -98,7 +100,7 @@ class Unit:
         Returns:
             True if the unit accepts the resources for this target, False otherwise
         """
-        # C++: return (m_resources.canAddSomeResources(resourcesToTryToAdd)) &&
+        # C++: return (m_resources.can_add_some_resources(resourcesToTryToAdd)) &&
         #             ((find(m_type.targets.begin(), m_type.targets.end(), searchTarget)
         #               != m_type.targets.end()));
 
@@ -149,13 +151,13 @@ class Unit:
         """
         return self.m_node.id()
 
-    def hasWays(self) -> bool:
+    def has_ways(self) -> bool:
         """
         Check if can access to at least one Way. A Unit shall refer to
         a Node with neighbors else Agents cannot move towards Path.
         Equivalent to C++ bool hasWays() const.
         """
-        return self.m_node.hasWays()
+        return self.m_node.has_ways()
 
 
 # Type alias for collections (equivalent to C++ using Units = std::vector<std::unique_ptr<Unit>>)

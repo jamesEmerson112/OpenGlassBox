@@ -35,7 +35,7 @@ class RuleValueGlobal(IRuleValue):
         Returns:
             The amount of the global resource
         """
-        return context.globals.getAmount(self.m_resource.type())
+        return context.globals.get_amount(self.m_resource.type())
 
     def capacity(self, context: RuleContext) -> int:
         """
@@ -47,7 +47,7 @@ class RuleValueGlobal(IRuleValue):
         Returns:
             The capacity of the global resource
         """
-        return context.globals.getCapacity(self.m_resource.type())
+        return context.globals.get_capacity(self.m_resource.type())
 
     def add(self, context: RuleContext, to_add: int) -> None:
         """
@@ -57,7 +57,7 @@ class RuleValueGlobal(IRuleValue):
             context: The rule context containing reference to resources
             to_add: The amount to add
         """
-        context.globals.addResource(self.m_resource.type(), to_add)
+        context.globals.add_resource(self.m_resource.type(), to_add)
 
     def remove(self, context: RuleContext, to_remove: int) -> None:
         """
@@ -67,7 +67,7 @@ class RuleValueGlobal(IRuleValue):
             context: The rule context containing reference to resources
             to_remove: The amount to remove
         """
-        context.globals.removeResource(self.m_resource.type(), to_remove)
+        context.globals.remove_resource(self.m_resource.type(), to_remove)
 
     def type(self) -> str:
         """
@@ -104,7 +104,7 @@ class RuleValueLocal(IRuleValue):
         Returns:
             The amount of the local resource
         """
-        return context.locals.getAmount(self.m_resource.type())
+        return context.locals.get_amount(self.m_resource.type())
 
     def capacity(self, context: RuleContext) -> int:
         """
@@ -116,7 +116,7 @@ class RuleValueLocal(IRuleValue):
         Returns:
             The capacity of the local resource
         """
-        return context.locals.getCapacity(self.m_resource.type())
+        return context.locals.get_capacity(self.m_resource.type())
 
     def add(self, context: RuleContext, to_add: int) -> None:
         """
@@ -126,7 +126,7 @@ class RuleValueLocal(IRuleValue):
             context: The rule context containing reference to resources
             to_add: The amount to add
         """
-        context.locals.addResource(self.m_resource.type(), to_add)
+        context.locals.add_resource(self.m_resource.type(), to_add)
 
     def remove(self, context: RuleContext, to_remove: int) -> None:
         """
@@ -136,7 +136,7 @@ class RuleValueLocal(IRuleValue):
             context: The rule context containing reference to resources
             to_remove: The amount to remove
         """
-        context.locals.removeResource(self.m_resource.type(), to_remove)
+        context.locals.remove_resource(self.m_resource.type(), to_remove)
 
     def type(self) -> str:
         """
@@ -173,7 +173,7 @@ class RuleValueMap(IRuleValue):
         Returns:
             The amount of the map resource
         """
-        return context.city.getMap(self.m_mapId).getResource(context.u, context.v, context.radius)
+        return context.city.getMap(self.m_mapId).get_resource(context.u, context.v, context.radius)
 
     def capacity(self, context: RuleContext) -> int:
         """
@@ -185,7 +185,7 @@ class RuleValueMap(IRuleValue):
         Returns:
             The capacity of the map resource
         """
-        return context.city.getMap(self.m_mapId).getCapacity()
+        return context.city.getMap(self.m_mapId).get_capacity()
 
     def add(self, context: RuleContext, to_add: int) -> None:
         """
@@ -195,7 +195,7 @@ class RuleValueMap(IRuleValue):
             context: The rule context containing reference to resources
             to_add: The amount to add
         """
-        context.city.getMap(self.m_mapId).addResource(context.u, context.v, context.radius, to_add)
+        context.city.getMap(self.m_mapId).add_resource(context.u, context.v, context.radius, to_add)
 
     def remove(self, context: RuleContext, to_remove: int) -> None:
         """
@@ -205,7 +205,7 @@ class RuleValueMap(IRuleValue):
             context: The rule context containing reference to resources
             to_remove: The amount to remove
         """
-        context.city.getMap(self.m_mapId).removeResource(context.u, context.v, context.radius, to_remove)
+        context.city.getMap(self.m_mapId).remove_resource(context.u, context.v, context.radius, to_remove)
 
     def type(self) -> str:
         """

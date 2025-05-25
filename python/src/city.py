@@ -336,7 +336,7 @@ class City:
         Returns:
             The newly created Unit
         """
-        new_node = path.splitWay(way, offset)
+        new_node = path.split_way(way, offset)
         return self.add_unit(unit_type, new_node)
 
     def add_agent(self, agent_type, owner, resources: Resources, search_target: str):
@@ -370,11 +370,11 @@ class City:
         """Get the position of the city in world coordinates."""
         return self.m_position
 
-    def gridSizeU(self) -> int:
+    def grid_size_u(self) -> int:
         """Get the grid size along the U-axis."""
         return self.m_gridSizeU
 
-    def gridSizeV(self) -> int:
+    def grid_size_v(self) -> int:
         """Get the grid size along the V-axis."""
         return self.m_gridSizeV
 

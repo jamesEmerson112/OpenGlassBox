@@ -53,7 +53,7 @@ class Node:
         self.m_ways: List['Way'] = []
         self.m_units: List[Any] = []  # Will be populated with references to Unit instances
 
-    def addUnit(self, unit: Any) -> None:
+    def add_unit(self, unit: Any) -> None:
         """
         Attach a Unit to this node.
 
@@ -72,9 +72,9 @@ class Node:
         self.m_position += direction
         # Update magnitude of all connected ways
         for way in self.m_ways:
-            way.updateMagnitude()
+            way.update_magnitude()
 
-    def getWayToNode(self, other_node: 'Node') -> Optional['Way']:
+    def get_way_to_node(self, other_node: 'Node') -> Optional['Way']:
         """
         Find a way connecting this node to another specified node.
 
@@ -90,7 +90,7 @@ class Node:
                 return way
         return None
 
-    def hasWays(self) -> bool:
+    def has_ways(self) -> bool:
         """
         Check if this node has any ways connected to it.
 
@@ -99,7 +99,7 @@ class Node:
         """
         return len(self.m_ways) > 0
 
-    def getMapPosition(self, grid_size_u: int, grid_size_v: int, u: int, v: int) -> Tuple[int, int]:
+    def get_map_position(self, grid_size_u: int, grid_size_v: int, u: int, v: int) -> Tuple[int, int]:
         """
         Convert world position to map coordinates.
 
@@ -205,9 +205,9 @@ class Way:
         self.m_to.m_ways.append(self)
 
         # Calculate initial length
-        self.updateMagnitude()
+        self.update_magnitude()
 
-    def updateMagnitude(self) -> None:
+    def update_magnitude(self) -> None:
         """
         Update the cached length of the way.
         """
@@ -308,7 +308,7 @@ class Path:
         self.m_nextNodeId = 0
         self.m_nextWayId = 0
 
-    def addNode(self, position: Vector3f) -> Node:
+    def add_node(self, position: Vector3f) -> Node:
         """
         Create and add a new node to the path.
 
@@ -323,7 +323,7 @@ class Path:
         self.m_nextNodeId += 1
         return node
 
-    def addWay(self, way_type: WayType, node1: Node, node2: Node) -> Way:
+    def add_way(self, way_type: WayType, node1: Node, node2: Node) -> Way:
         """
         Create and add a new way connecting two nodes.
 
@@ -340,7 +340,7 @@ class Path:
         self.m_nextWayId += 1
         return way
 
-    def splitWay(self, way: Way, offset: float) -> Node:
+    def split_way(self, way: Way, offset: float) -> Node:
         """
         Split a way into two segments by creating a new node.
 
@@ -361,10 +361,10 @@ class Path:
         world_position = way.position1() + (way.position2() - way.position1()) * offset
 
         # Create the new node
-        new_node = self.addNode(world_position)
+        new_node = self.add_node(world_position)
 
         # Create a new way from the new node to the original destination
-        self.addWay(way.m_type, new_node, way.to())
+        self.add_way(way.m_type, new_node, way.to())
 
         # Update the original way to end at the new node
         # First remove it from the original destination node
@@ -377,7 +377,7 @@ class Path:
         new_node.m_ways.append(way)
 
         # Update the way's length
-        way.updateMagnitude()
+        way.update_magnitude()
 
         return new_node
 

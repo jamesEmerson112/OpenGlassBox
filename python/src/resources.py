@@ -27,7 +27,7 @@ class Resources:
         """
         self.m_bin: List[Resource] = []
 
-    def findResource(self, resource_type: str) -> Optional[Resource]:
+    def find_resource(self, resource_type: str) -> Optional[Resource]:
         """
         Search for a resource given its type.
 
@@ -42,7 +42,7 @@ class Resources:
                 return resource
         return None
 
-    def findOrAddResource(self, resource_type: str) -> Resource:
+    def find_or_add_resource(self, resource_type: str) -> Resource:
         """
         Search for a resource given its name. If the resource is not
         present, create one and store it before returning its reference.
@@ -53,7 +53,7 @@ class Resources:
         Returns:
             The reference of the resource already stored or the newly created
         """
-        resource = self.findResource(resource_type)
+        resource = self.find_resource(resource_type)
         if resource is not None:
             return resource
 
@@ -61,7 +61,7 @@ class Resources:
         self.m_bin.append(new_resource)
         return new_resource
 
-    def addResource(self, resource_type: str, amount: int) -> Resource:
+    def add_resource(self, resource_type: str, amount: int) -> Resource:
         """
         Find an existing resource in the collection. If not found,
         create and store a new resource with the current amount. If the resource
@@ -74,11 +74,11 @@ class Resources:
         Returns:
             The found resource or newly created resource
         """
-        resource = self.findOrAddResource(resource_type)
+        resource = self.find_or_add_resource(resource_type)
         resource.add(amount)
         return resource
 
-    def removeResource(self, resource_type: str, amount: int) -> bool:
+    def remove_resource(self, resource_type: str, amount: int) -> bool:
         """
         Reduce a given quantity of resource. If the resource does not
         exist, this function does nothing.
@@ -93,13 +93,13 @@ class Resources:
         Returns:
             Boolean indicating if the desired resource has been found
         """
-        resource = self.findResource(resource_type)
+        resource = self.find_resource(resource_type)
         if resource is not None:
             resource.remove(amount)
             return True
         return False
 
-    def addResources(self, resources_to_add: 'Resources') -> None:
+    def add_resources(self, resources_to_add: 'Resources') -> None:
         """
         Add a collection of resources. Apply addResource() for each type
         of resource.
@@ -111,9 +111,9 @@ class Resources:
             return
 
         for resource in resources_to_add.m_bin:
-            self.addResource(resource.type(), resource.getAmount())
+            self.add_resource(resource.type(), resource.get_amount())
 
-    def removeResources(self, resources_to_reduce: 'Resources') -> None:
+    def remove_resources(self, resources_to_reduce: 'Resources') -> None:
         """
         Apply removeResource() for each resource in the collection.
 
@@ -124,9 +124,9 @@ class Resources:
             return
 
         for resource in resources_to_reduce.m_bin:
-            self.removeResource(resource.type(), resource.getAmount())
+            self.remove_resource(resource.type(), resource.get_amount())
 
-    def canAddSomeResources(self, resources_to_try_add: 'Resources') -> bool:
+    def can_add_some_resources(self, resources_to_try_add: 'Resources') -> bool:
         """
         Check if we can add at least one resource.
 
@@ -142,13 +142,13 @@ class Resources:
             return False
 
         for resource in resources_to_try_add.m_bin:
-            if resource.hasAmount():
-                my_resource = self.findResource(resource.type())
-                if my_resource is not None and my_resource.getAmount() < my_resource.getCapacity():
+            if resource.has_amount():
+                my_resource = self.find_resource(resource.type())
+                if my_resource is not None and my_resource.get_amount() < my_resource.get_capacity():
                     return True
         return False
 
-    def transferResourcesTo(self, resources_target: 'Resources') -> None:
+    def transfer_resources_to(self, resources_target: 'Resources') -> None:
         """
         Transfer all resources to the recipient. For each resource the
         amount of resource is limited by the capacity of the recipient.
@@ -160,9 +160,9 @@ class Resources:
             return
 
         for resource in self.m_bin:
-            resource.transferTo(resources_target.findOrAddResource(resource.type()))
+            resource.transfer_to(resources_target.find_or_add_resource(resource.type()))
 
-    def getAmount(self, resource_type: str) -> int:
+    def get_amount(self, resource_type: str) -> int:
         """
         Return the amount of resource of the given type.
         If the resource does not exist, return 0.
@@ -173,10 +173,10 @@ class Resources:
         Returns:
             The amount of the resource or 0 if not found
         """
-        resource = self.findResource(resource_type)
-        return resource.getAmount() if resource is not None else 0
+        resource = self.find_resource(resource_type)
+        return resource.get_amount() if resource is not None else 0
 
-    def setCapacity(self, resource_type: str, capacity: int) -> None:
+    def set_capacity(self, resource_type: str, capacity: int) -> None:
         """
         Find an existing resource in the collection and change its
         capacity. If the resource has not been found then create and store a new
@@ -188,10 +188,10 @@ class Resources:
             resource_type: The type of resource
             capacity: The new capacity
         """
-        resource = self.findOrAddResource(resource_type)
-        resource.setCapacity(capacity)
+        resource = self.find_or_add_resource(resource_type)
+        resource.set_capacity(capacity)
 
-    def setCapacities(self, resources_capacities: 'Resources') -> None:
+    def set_capacities(self, resources_capacities: 'Resources') -> None:
         """
         Apply setCapacity() to a collection of resources.
 
@@ -199,9 +199,9 @@ class Resources:
             resources_capacities: Resources container with capacity information
         """
         for resource in resources_capacities.m_bin:
-            self.setCapacity(resource.type(), resource.getCapacity())
+            self.set_capacity(resource.type(), resource.get_capacity())
 
-    def getCapacity(self, resource_type: str) -> int:
+    def get_capacity(self, resource_type: str) -> int:
         """
         Return the maximal amount of resource of the given type.
         If the resource does not exist, return 0.
@@ -212,10 +212,10 @@ class Resources:
         Returns:
             The capacity of the resource or 0 if not found
         """
-        resource = self.findResource(resource_type)
-        return resource.getCapacity() if resource is not None else 0
+        resource = self.find_resource(resource_type)
+        return resource.get_capacity() if resource is not None else 0
 
-    def isEmpty(self) -> bool:
+    def is_empty(self) -> bool:
         """
         Return true if all resources are empty.
 
@@ -223,20 +223,11 @@ class Resources:
             True if all resources have zero amount, False otherwise
         """
         for resource in self.m_bin:
-            if resource.hasAmount():
+            if resource.has_amount():
                 return False
         return True
 
-    def is_empty(self) -> bool:
-        """
-        Alias for isEmpty() method for Python naming convention compatibility.
-
-        Returns:
-            True if all resources have zero amount, False otherwise
-        """
-        return self.isEmpty()
-
-    def hasResource(self, resource_type: str) -> bool:
+    def has_resource(self, resource_type: str) -> bool:
         """
         Return true if the resource of the given type is present in the
         collection.
@@ -247,7 +238,7 @@ class Resources:
         Returns:
             True if the resource exists in the collection, False otherwise
         """
-        return self.findResource(resource_type) is not None
+        return self.find_resource(resource_type) is not None
 
     def container(self) -> List[Resource]:
         """

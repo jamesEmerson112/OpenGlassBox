@@ -161,7 +161,7 @@ class MapCoordinatesInsideRadius:
         return (rel_v << 16) | (rel_u & 0xFFFF)
 
     @staticmethod
-    def relativeCoordinates(radius: int) -> List[Tuple[int, int]]:
+    def relative_coordinates(radius: int) -> List[Tuple[int, int]]:
         """
         Get relative coordinates for a radius (static utility method).
 
